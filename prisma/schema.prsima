@@ -1,0 +1,232 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  TECHNICIEN
+  CLIENT
+}
+
+model Authentification {
+  id_authentification String   @id @default(uuid())
+  email               String   @unique @db.VarChar(50)
+  mot_passe_hash      String   @db.VarChar(500)
+  Role                Role
+  actif               Boolean  @default(true)
+  date_creation       DateTime @default(now())
+  date_modification   DateTime @updatedAt
+
+  client          Client?
+  technicien      Technicien?
+  administrateur  Administrateur?
+
+  @@map("authentification")
+}
+
+model Client {
+  id_client           String   @id @default(uuid()) @db.VarChar(50)
+  nom                 String   @db.VarChar(50)
+  prenom              String   @db.VarChar(50)
+  telephone           String?  @db.VarChar(20)
+  adresse             String   @db.VarChar(255)
+  code_postal         String   @db.VarChar(10)
+  ville               String   @db.VarChar(255)
+  latitude            Decimal? @db.Decimal(9, 6)
+  longitude           Decimal? @db.Decimal(9, 6)
+  id_authentification String   @unique @db.VarChar(50)
+
+  authentification Authentification @relation(fields: [id_authentification], references: [id_authentification])
+  velos            Velo[]
+  photos           Photo[]
+  interventions    Intervention[]
+
+  @@map("client")
+}
+
+model Technicien {
+  id_technicien       String @id @default(uuid())
+  nom                 String @db.VarChar(50)
+  prenom              String @db.VarChar(50)
+  telephone           String @db.VarChar(20)
+  id_authentification String @unique @db.VarChar(50)
+
+  authentification Authentification @relation(fields: [id_authentification], references: [id_authentification])
+  interventions    Intervention[]
+  assigner         Assigner[]
+
+  @@map("technicien")
+}
+
+model Administrateur {
+  id_administrateur   String   @id @default(uuid())
+  nom                 String   @db.VarChar(50)
+  siret               String?  @db.VarChar(14)
+  adresse             String?  @db.VarChar(255)
+  code_postal         String?  @db.VarChar(10)
+  ville               String?  @db.VarChar(255)
+  telephone           String?  @db.VarChar(20)
+  email               String?  @db.VarChar(200)
+  logo_url            String?  @db.VarChar(255)
+  date_modification   DateTime @updatedAt
+  id_authentification String   @unique @db.VarChar(50)
+
+  authentification Authentification @relation(fields: [id_authentification], references: [id_authentification])
+
+  @@map("administrateur")
+}
+
+model Velo {
+  id_velo       String   @id @default(uuid())
+  marque        String   @db.VarChar(50)
+  modele        String   @db.VarChar(100)
+  annee         Int
+  type_velo     String   @db.VarChar(100)
+  date_creation DateTime @default(now())
+  id_client     String   @db.VarChar(50)
+
+  client        Client         @relation(fields: [id_client], references: [id_client])
+  interventions Intervention[]
+
+  @@map("velo")
+}
+
+model Zone {
+  id_zone           String   @id @default(uuid())
+  nom               String   @db.VarChar(50)
+  description       String?  @db.Text
+  geojson           String?  @db.Text
+  frais_deplacement Decimal? @db.Decimal(8, 2)
+  date_creation     DateTime @default(now())
+
+  interventions Intervention[]
+  modeles_zone  Modele_zone[]
+
+  @@map("zone")
+}
+
+model Forfait {
+  id_forfait    String   @id @default(uuid())
+  nom           String   @db.VarChar(100)
+  description   String?  @db.Text
+  prix          Decimal? @db.Decimal(8, 2)
+  duree_minutes Int
+  actif         Boolean  @default(true) // Corrigé (Bollean -> Boolean)
+  type_velo     String?  @db.VarChar(100) // Corrigé (@de -> @db)
+  date_creation DateTime @default(now())
+
+  interventions Intervention[]
+
+  @@map("forfait")
+}
+
+model Produit {
+  id_produit    String   @id @default(uuid())
+  nom           String   @db.VarChar(100)
+  description   String?  @db.Text
+  prix          Decimal? @db.Decimal(8, 2)
+  actif         Boolean  @default(true) // Corrigé
+  date_creation DateTime @default(now())
+
+  inclure Inclure[]
+
+  @@map("produit")
+}
+
+model Intervention {
+  id_intervention      String    @id @default(uuid())
+  date_intervention    DateTime
+  heure_debut          DateTime?
+  heure_fin            DateTime?
+  statut               String    @default("PLANIFIEE") @db.VarChar(50)
+  adresse_intervention String?   @db.VarChar(255)
+  montant              Decimal?  @db.Decimal(10, 2)
+  commentaire          String?   @db.Text
+  url_photo            String?   @db.VarChar(255)
+  date_creation        DateTime  @default(now())
+  id_zone              String?   @db.VarChar(50)
+  id_technicien        String?   @db.VarChar(50)
+  id_forfait           String?   @db.VarChar(50)
+  id_velo              String?   @db.VarChar(50)
+  id_client            String?   @db.VarChar(50)
+
+  zone       Zone?       @relation(fields: [id_zone], references: [id_zone])
+  technicien Technicien? @relation(fields: [id_technicien], references: [id_technicien])
+  forfait    Forfait?    @relation(fields: [id_forfait], references: [id_forfait])
+  velo       Velo?       @relation(fields: [id_velo], references: [id_velo])
+  client     Client?     @relation(fields: [id_client], references: [id_client])
+  photos     Photo[]
+  inclure    Inclure[]
+
+  @@map("intervention")
+}
+
+model Photo {
+  id_photo        String   @id @default(uuid())
+  type            String   @db.VarChar(50)
+  url_photo       String   @db.VarChar(500)
+  date_creation   DateTime @default(now())
+  id_client       String?  @db.VarChar(50)
+  id_intervention String?  @db.VarChar(50)
+
+  client       Client?       @relation(fields: [id_client], references: [id_client])
+  intervention Intervention? @relation(fields: [id_intervention], references: [id_intervention])
+
+  @@map("photo")
+}
+
+model Modele_planification {
+  id_modele_planification String   @id @default(uuid())
+  nom                     String   @db.VarChar(50)
+  description             String?  @db.Text
+  heure_debut             DateTime
+  heure_fin               DateTime
+  duree_pause             Int
+  actif                   Boolean  @default(true)
+  date_creation           DateTime @default(now())
+
+  assigner     Assigner[]
+  modeles_zone Modele_zone[]
+
+  @@map("modele_planification")
+}
+
+model Modele_zone {
+  id_modele_zone          String @id @default(uuid())
+  buffer_deplacement      Int
+  max_intervention_jour   Int
+  id_zone                 String @db.VarChar(50)
+  id_modele_planification String @db.VarChar(50)
+
+  zone                 Zone                 @relation(fields: [id_zone], references: [id_zone])
+  modele_planification Modele_planification @relation(fields: [id_modele_planification], references: [id_modele_planification])
+
+  @@map("modele_zone")
+}
+
+model Assigner {
+  id_technicien           String @db.VarChar(50)
+  id_modele_planification String @db.VarChar(50)
+
+  technicien           Technicien           @relation(fields: [id_technicien], references: [id_technicien])
+  modele_planification Modele_planification @relation(fields: [id_modele_planification], references: [id_modele_planification])
+
+  @@id([id_technicien, id_modele_planification])
+  @@map("assigner")
+}
+
+model Inclure {
+  id_intervention String @db.VarChar(50)
+  id_produit      String @db.VarChar(50)
+  quantite        Int    @default(1)
+
+  intervention Intervention @relation(fields: [id_intervention], references: [id_intervention])
+  produit      Produit      @relation(fields: [id_produit], references: [id_produit])
+
+  @@id([id_intervention, id_produit])
+  @@map("inclure")
+}
