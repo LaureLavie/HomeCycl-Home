@@ -66,19 +66,31 @@ model Technicien {
 model Administrateur {
   id_administrateur   String   @id @default(uuid())
   nom                 String   @db.VarChar(50)
-  siret               String?  @db.VarChar(14)
-  adresse             String?  @db.VarChar(255)
-  code_postal         String?  @db.VarChar(10)
-  ville               String?  @db.VarChar(255)
-  telephone           String?  @db.VarChar(20)
   email               String?  @db.VarChar(200)
-  logo_url            String?  @db.VarChar(255)
   date_modification   DateTime @updatedAt
   id_authentification String   @unique @db.VarChar(50)
 
   authentification Authentification @relation(fields: [id_authentification], references: [id_authentification])
 
   @@map("administrateur")
+}
+
+model Entreprise {
+  id_entreprise     String   @id @default(uuid())
+  nom               String   @db.VarChar(100)
+  siret             String?  @db.VarChar(14)
+  adresse           String?  @db.VarChar(255)
+  code_postal       String?  @db.VarChar(10)
+  ville             String?  @db.VarChar(255)
+  telephone         String?  @db.VarChar(20)
+  email             String?  @db.VarChar(200)
+  site_web          String?  @db.VarChar(255)
+  description       String?  @db.Text
+  logo_url          String?  @db.VarChar(500)
+  date_creation     DateTime @default(now())
+  date_modification DateTime @updatedAt
+
+  @@map("entreprise")
 }
 
 model Velo {
