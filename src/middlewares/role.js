@@ -1,4 +1,4 @@
-const authorize = (allowedRoles = []) => {
+export const authorize = (allowedRoles = []) => {
   return (req, res, next) => {
 
     if (!req.user || !allowedRoles.includes(req.user.role)) {
@@ -7,5 +7,3 @@ const authorize = (allowedRoles = []) => {
     next();
   };
 };
-
-module.exports = { authorize };

@@ -1,11 +1,10 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-const { hashPassword } = require('../utils/auth');
+import { hashPassword } from'../utils/auth.js';
 
-const registerClient = async (data) => {
+
+export const registerClient = async (data) => {
   const hashedPassword = await hashPassword(data.mot_passe);
   
-  return await prisma.authentification.create({
+  return await authentification.create({
     data: {
       email: data.email,
       mot_passe_hash: hashedPassword,
@@ -22,5 +21,3 @@ const registerClient = async (data) => {
     }
   });
 };
-
-module.exports = { registerClient };

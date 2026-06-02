@@ -1,8 +1,8 @@
-const express = require('express');
+import express from'express';
 const router = express.Router();
-const { auth } = require('../middlewares/auth');
-const { authorize } = require('../middlewares/role');
-const authController = require('../controllers/authController');
+import { auth } from'../middlewares/auth.js';
+import { authorize } from'../middlewares/role.js';
+import * as authController from'../controllers/authController.js';
 
 router.post('/signup', authController.signup);
 router.post('/login',authController.login);
@@ -14,4 +14,4 @@ router.delete('/:id', auth, authorize(['ADMIN']), authController.delete);
 router.put('/:id', auth, authorize(['ADMIN', 'TECHNICIEN']), authController.update);
 router.post('/', auth, authorize(['CLIENT', 'ADMIN']), authController.create);
 
-module.exports = router;
+export default router;
