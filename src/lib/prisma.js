@@ -2,7 +2,7 @@
 // Compétence CDA : Concevoir et mettre en place une base de données relationnelle
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../../generated/prisma/client.js';
+import { PrismaClient } from '../generated/client.ts';
 
 const connectionString = process.env.DATABASE_URL;
 

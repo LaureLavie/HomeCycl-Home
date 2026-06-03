@@ -5,7 +5,7 @@ import {
   createUserAdminSchema,
   updateUserAdminSchema,
   paginationSchema,
-} from '../validators/sprint3Validator.js';
+} from '../validators/validators.js';
 
 // ─────────────────────────────────────────────
 // GET /api/users — Liste paginée des utilisateurs

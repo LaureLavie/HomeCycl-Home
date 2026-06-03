@@ -1,4 +1,4 @@
-// ENT-01 / USER-01 / CLIENT-01 : Modèles de validation des données
+// ENT-01 / USER-01 / CLIENT-01 / INTER-01: Modèles de validation des données
 // Compétence CDA : Développer des composants métier + Sécurité (validation entrées)
 import { z } from 'zod';
 
@@ -129,4 +129,175 @@ export const paginationSchema = z.object({
  
   search: z.string().max(100).optional(),
 });
+
  
+// ─────────────────────────────────────────────
+// US-07 : Interventions — INTERV-01
+// ─────────────────────────────────────────────
+ 
+// Statuts autorisés (reflète la logique métier)
+const STATUTS_INTERVENTION = Object.freeze([
+  'PLANIFIEE',
+  'EN_COURS',
+  'TERMINEE',
+  'ANNULEE',
+  'ABSENT_CLIENT',
+]);
+
+export const createInterventionSchema = z.object({
+  date_intervention: z
+    .string({ required_error: 'La date est obligatoire' })
+    .datetime({ message: 'Format de date invalide (ISO 8601 attendu)' }),
+ 
+  heure_debut: z.string().datetime().optional(),
+  heure_fin: z.string().datetime().optional(),
+ 
+  adresse_intervention: z
+    .string()
+    .max(255, "L'adresse ne doit pas dépasser 255 caractères")
+    .optional(),
+ 
+  commentaire: z.string().optional(),
+ 
+  // Relations optionnelles (peuvent être affectées plus tard)
+  id_zone: z.string().uuid('ID zone invalide').optional(),
+  id_technicien: z.string().uuid('ID technicien invalide').optional(),
+  id_forfait: z.string().uuid('ID forfait invalide').optional(),
+  id_velo: z.string().uuid('ID vélo invalide').optional(),
+  id_client: z.string().uuid('ID client invalide').optional(),
+ 
+  // Produits additionnels à inclure
+  produits: z
+    .array(
+      z.object({
+        id_produit: z.string().uuid('ID produit invalide'),
+        quantite: z.number().int().min(1, 'Quantité minimale : 1').default(1),
+      })
+    )
+    .optional(),
+});
+ 
+export const updateInterventionSchema = z.object({
+  date_intervention: z.string().datetime().optional(),
+  heure_debut: z.string().datetime().optional(),
+  heure_fin: z.string().datetime().optional(),
+  statut: z.enum(STATUTS_INTERVENTION).optional(),
+  adresse_intervention: z.string().max(255).optional(),
+  montant: z.number().nonnegative('Le montant ne peut pas être négatif').optional(),
+  commentaire: z.string().optional(),
+  id_zone: z.string().uuid().optional(),
+  id_technicien: z.string().uuid().optional(),
+  id_forfait: z.string().uuid().optional(),
+  id_velo: z.string().uuid().optional(),
+  id_client: z.string().uuid().optional(),
+  produits: z
+    .array(
+      z.object({
+        id_produit: z.string().uuid(),
+        quantite: z.number().int().min(1).default(1),
+      })
+    )
+    .optional(),
+});
+ 
+// Filtre de liste interventions
+export const filtreInterventionSchema = z.object({
+  page: z.string().regex(/^\d+$/).transform(Number).optional().default('1'),
+  limit: z.string().regex(/^\d+$/).transform(Number).optional().default('20'),
+  statut: z.enum(STATUTS_INTERVENTION).optional(),
+  id_technicien: z.string().uuid().optional(),
+  id_zone: z.string().uuid().optional(),
+  date_debut: z.string().datetime().optional(),
+  date_fin: z.string().datetime().optional(),
+});
+ 
+// ─────────────────────────────────────────────
+// US-08 : Forfaits (tarifs interventions) — INTERV-06
+// ─────────────────────────────────────────────
+ 
+export const createForfaitSchema = z.object({
+  nom: z
+    .string({ required_error: 'Le nom du forfait est obligatoire' })
+    .min(1)
+    .max(100),
+ 
+  description: z.string().optional(),
+ 
+  prix: z
+    .number({ required_error: 'Le prix est obligatoire' })
+    .nonnegative('Le prix ne peut pas être négatif'),
+ 
+  duree_minutes: z
+    .number({ required_error: 'La durée est obligatoire' })
+    .int()
+    .min(15, 'Durée minimale : 15 minutes')
+    .max(480, 'Durée maximale : 8 heures'),
+ 
+  type_velo: z
+    .string()
+    .max(100)
+    .optional(),
+ 
+  actif: z.boolean().default(true),
+});
+ 
+export const updateForfaitSchema = createForfaitSchema.partial();
+ 
+// ─────────────────────────────────────────────
+// US-09 : Produits additionnels — INTERV-11
+// ─────────────────────────────────────────────
+ 
+export const createProduitSchema = z.object({
+  nom: z
+    .string({ required_error: 'Le nom du produit est obligatoire' })
+    .min(1)
+    .max(100),
+ 
+  description: z.string().optional(),
+ 
+  prix: z
+    .number({ required_error: 'Le prix est obligatoire' })
+    .nonnegative('Le prix ne peut pas être négatif'),
+ 
+  actif: z.boolean().default(true),
+});
+ 
+export const updateProduitSchema = createProduitSchema.partial();
+ 
+// ─────────────────────────────────────────────
+// US-10 : Zones géographiques — MAP-02
+// ─────────────────────────────────────────────
+ 
+export const createZoneSchema = z.object({
+  nom: z
+    .string({ required_error: 'Le nom de la zone est obligatoire' })
+    .min(1)
+    .max(50),
+ 
+  description: z.string().optional(),
+ 
+  // GeoJSON stocké en TEXT — validé comme string JSON valide
+  geojson: z
+    .string()
+    .refine(
+      (val) => {
+        try { JSON.parse(val); return true; }
+        catch { return false; }
+      },
+      { message: 'Le GeoJSON doit être un JSON valide' }
+    )
+    .optional(),
+ 
+  frais_deplacement: z
+    .number()
+    .nonnegative('Les frais ne peuvent pas être négatifs')
+    .optional(),
+});
+ 
+export const updateZoneSchema = createZoneSchema.partial();
+ 
+// Attribution zone → technicien
+export const assignerTechnicienSchema = z.object({
+  id_technicien: z.string().uuid('ID technicien invalide'),
+  id_modele_planification: z.string().uuid('ID modèle invalide'),
+});

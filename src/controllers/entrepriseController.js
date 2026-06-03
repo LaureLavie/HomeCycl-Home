@@ -4,7 +4,7 @@ import * as entrepriseService from '../services/entrepriseService.js';
 import {
   createEntrepriseSchema,
   updateEntrepriseSchema,
-} from '../validators/sprint3Validator.js';
+} from '../validators/validators.js';
 
 // ─────────────────────────────────────────────
 // GET /api/entreprise — Récupère les infos entreprise

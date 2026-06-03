@@ -6,7 +6,13 @@ import authRouter from './routes/authRoute.js';
 import { clientRouter } from './routes/clientRoute.js';
 import { entrepriseRouter } from './routes/entrepriseRoute.js';
 import { userRouter } from './routes/userRoute.js';
-
+import {
+  interventionRouter,
+  forfaitRouter,
+  produitRouter,
+  zoneRouter,
+  planningRouter,
+} from './routes/interventionRoute.js';
 
 dotenv.config();
 
@@ -31,8 +37,13 @@ app.use((req, res, next) => {
 // ─────────────────────────────────────────────
 app.use('/api/auth', authRouter);
 app.use('/api/entreprise', entrepriseRouter);
-app.use('/api/client',clientRouter);
-app.use('api/user', userRouter);
+app.use('/api/client', clientRouter);
+app.use('/api/user', userRouter);
+app.use('/api/intervention', interventionRouter);
+app.use('/api/forfait', forfaitRouter);
+app.use('/api/produit', produitRouter);
+app.use('/api/zone', zoneRouter);
+app.use('/api/planning', planningRouter);
 
 
 // Route de santé (health check — utile pour le déploiement Docker/VPS)

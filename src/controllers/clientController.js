@@ -4,7 +4,7 @@ import * as clientService from '../services/clientService.js';
 import {
   updateClientSchema,
   paginationSchema,
-} from '../validators/sprint3Validator.js';
+} from '../validators/validators.js';
 
 // ─────────────────────────────────────────────
 // GET /api/clients — Liste paginée des clients
