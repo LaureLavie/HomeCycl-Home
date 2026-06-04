@@ -15,7 +15,7 @@ import {
   createZoneSchema,
   updateZoneSchema,
   assignerTechnicienSchema,
-} from '../validators/validator.js';
+} from '../validators/validators.js';
 
 // ═════════════════════════════════════════════
 // US-07 : INTERVENTIONS
