@@ -1,25 +1,18 @@
-# Étape 1 : Base
-FROM node:20-alpine AS base
+# Étape de build
+FROM node:20-alpine AS builder
 WORKDIR /app
-
-# Étape 2 : Installation des dépendances
-FROM base AS deps
 COPY package*.json ./
 RUN npm install
-
-# Étape 3 : Application finale
-FROM base AS runner
-WORKDIR /app
-
-# Copie uniquement les dépendances nécessaires
-COPY --from=deps /app/node_modules ./node_modules
-# Copie le reste du code source
 COPY . .
+# Compilation : transforme tout le dossier src/ en dist/
+RUN npm install -g typescript && tsc
 
-# Génère le client Prisma 
-RUN npx prisma generate
+# Étape finale (exécution)
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
 
-EXPOSE 3000
-
-# Utilise le script "start" 
-CMD ["npm", "start"]
+# On lance le code compilé
+CMD ["node", "dist/index.ts"]

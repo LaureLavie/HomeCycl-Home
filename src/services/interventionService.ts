@@ -1,7 +1,7 @@
 // INTERV-02 : CRUD Interventions
 // Compétence CDA : Développer des composants d'accès aux données SQL
 // Compétence CDA : Développer des composants métier
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '../lib/prisma';
 
 // ─────────────────────────────────────────────
 // GET ALL — Liste paginée avec filtres

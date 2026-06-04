@@ -1,8 +1,8 @@
 // Compétence CDA : Développer des composants métier — Architecture REST
 import express from 'express';
-import { auth } from '../middlewares/auth.js';
-import { authorize } from '../middlewares/role.js';
-import * as entrepriseController from '../controllers/entrepriseController.js';
+import { auth } from '../middlewares/auth';
+import { authorize } from '../middlewares/role';
+import * as entrepriseController from '../controllers/entrepriseController';
 
 // ═════════════════════════════════════════════
 // ROUTES ENTREPRISE — US-04

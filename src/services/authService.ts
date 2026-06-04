@@ -1,7 +1,7 @@
 // AUTH-01 à AUTH-07 : Service métier d'authentification
 // Compétence CDA : Développer des composants métier + Accès aux données SQL
-import { prisma } from '../lib/prisma.js';
-import { hashPassword, comparePassword, generateToken } from '../utils/auth.js';
+import { prisma } from '../lib/prisma';
+import { hashPassword, comparePassword, generateToken } from '../utils/auth';
 
 // ─────────────────────────────────────────────
 // US-02 : Création de compte selon rôle
