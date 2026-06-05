@@ -301,3 +301,118 @@ export const assignerTechnicienSchema = z.object({
   id_technicien: z.string().uuid('ID technicien invalide'),
   id_modele_planification: z.string().uuid('ID modèle invalide'),
 });
+
+// ─────────────────────────────────────────────
+// Filtre interventions technicien — US-12 / US-13
+// TECH-01 / TECH-05
+// ─────────────────────────────────────────────
+ 
+
+export const filtreInterventionTechSchema = z.object({
+  page: z
+    .string()
+    .regex(/^\d+$/)
+    .transform(Number)
+    .refine((n) => n >= 1)
+    .optional()
+    .default('1'),
+  limit: z
+    .string()
+    .regex(/^\d+$/)
+    .transform(Number)
+    .refine((n) => n >= 1 && n <= 100)
+    .optional()
+    .default('20'),
+  // Filtre par statut (US-19 : TECH-18 filtre interventions finies)
+  statut: z.enum(STATUTS_INTERVENTION).optional(),
+  // Filtre par date (US-13 : planning semaine)
+  date_debut: z.string().datetime().optional(),
+  date_fin: z.string().datetime().optional(),
+  // Filtre jour spécifique (planning du jour)
+  date_jour: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format attendu : YYYY-MM-DD')
+    .optional(),
+});
+ 
+// ─────────────────────────────────────────────
+// Modification intervention par le technicien — US-12
+// TECH-02 : formulaire pré-rempli (champs limités au rôle TECHNICIEN)
+// Le technicien ne peut PAS modifier : id_client, id_zone, id_forfait, date
+// Il peut modifier : commentaire, statut (limité), heure_debut, heure_fin
+// ─────────────────────────────────────────────
+ 
+export const updateInterventionTechSchema = z.object({
+  commentaire: z.string().max(2000).optional(),
+  heure_debut: z.string().datetime().optional(),
+  heure_fin: z.string().datetime().optional(),
+  // US-19 : seul le statut EN_COURS est accessible librement
+  // TERMINEE et ANNULEE ont leurs propres endpoints dédiés
+  statut: z
+    .enum(['EN_COURS', 'PLANIFIEE', 'ABSENT_CLIENT'])
+    .optional(),
+  // Ajout de produits pendant l'intervention (US-12)
+  produits: z
+    .array(
+      z.object({
+        id_produit: z.string().uuid('ID produit invalide'),
+        quantite: z.number().int().min(1).default(1),
+      })
+    )
+    .optional(),
+});
+ 
+// ─────────────────────────────────────────────
+// Commentaire seul — US-18 TECH-15
+// ─────────────────────────────────────────────
+ 
+export const commentaireSchema = z.object({
+  commentaire: z
+    .string({ required_error: 'Le commentaire est obligatoire' })
+    .min(1, 'Le commentaire ne peut pas être vide')
+    .max(2000, 'Le commentaire ne doit pas dépasser 2000 caractères'),
+});
+ 
+// ─────────────────────────────────────────────
+// Annulation d'intervention — US-20 TECH-19
+// ─────────────────────────────────────────────
+ 
+export const annulationSchema = z.object({
+  motif: z
+    .string()
+    .max(500, 'Le motif ne doit pas dépasser 500 caractères')
+    .optional(),
+});
+ 
+// ─────────────────────────────────────────────
+// Modification client par le technicien — US-14 TECH-07
+// Le technicien peut modifier des infos de contact uniquement
+// ─────────────────────────────────────────────
+ 
+export const updateClientTechSchema = z.object({
+  telephone: z
+    .string()
+    .max(20, 'Le téléphone ne doit pas dépasser 20 caractères')
+    .optional(),
+  adresse: z.string().max(255).optional(),
+  code_postal: z
+    .string()
+    .regex(/^\d{5}$/, 'Code postal invalide (5 chiffres)')
+    .optional()
+    .or(z.literal('')),
+  ville: z.string().max(255).optional(),
+  // Le technicien ne peut PAS changer nom, prenom, email
+});
+ 
+// ─────────────────────────────────────────────
+// Upload photo — US-17 TECH-12
+// Validation des métadonnées (le fichier est géré par multer)
+// ─────────────────────────────────────────────
+ 
+export const photoMetaSchema = z.object({
+  // Type de photo : avant ou après intervention
+  type: z.enum(['AVANT', 'APRES', 'DETAIL'], {
+    required_error: 'Le type de photo est obligatoire',
+    invalid_type_error: "Le type doit être AVANT, APRES ou DETAIL",
+  }),
+});

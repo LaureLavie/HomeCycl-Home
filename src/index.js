@@ -2,10 +2,12 @@
 // Compétence CDA : Installer et configurer son environnement de travail
 import express from 'express';
 import dotenv from 'dotenv';
+import path from 'path';
 import authRouter from './routes/authRoute.js';
 import { clientRouter } from './routes/clientRoute.js';
 import { entrepriseRouter } from './routes/entrepriseRoute.js';
 import { userRouter } from './routes/userRoute.js';
+import { techRouter } from './routes/technicienRoute.js';
 import {
   interventionRouter,
   forfaitRouter,
@@ -44,7 +46,10 @@ app.use('/api/forfait', forfaitRouter);
 app.use('/api/produit', produitRouter);
 app.use('/api/zone', zoneRouter);
 app.use('/api/planning', planningRouter);
+app.use('/api/technicien', techRouter);
 
+// Chemin pour servir les fichiers statiques (ex : images uploadées)
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Route de santé (health check — utile pour le déploiement Docker/VPS)
 app.get('/health', (req, res) => {
