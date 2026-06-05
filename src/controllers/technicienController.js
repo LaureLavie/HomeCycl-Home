@@ -10,7 +10,7 @@ import {
   annulationSchema,
   updateClientTechSchema,
   photoMetaSchema,
-} from '../validators/validator.js';
+} from '../validators/validators.js';
 
 // ═════════════════════════════════════════════
 // US-12 : INTERVENTIONS DU TECHNICIEN
