@@ -1,39 +1,73 @@
-name: CI/CD Pipeline
+name: 🚴 HomeCycl'Home — CI/CD Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  DOCKER_IMAGE: lorlaviedevdesign/homecyclhome
+  DOCKER_TAG: ${{ github.sha }}
 
 jobs:
-  build-and-push:
+  build:
+    name: 🐳 Build & Push Docker Image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
+      - name: 📥 Checkout du code
+        uses: actions/checkout@v4
+
+      - name: 🗂️ Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔑 Connexion à Docker Hub
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v4
+      - name: 🏗️ Build & Push image
+        uses: docker/build-push-action@v5
         with:
+          context: .
           push: true
-          tags: lorlaviedevdesign/homecyclhome:latest
+          tags: |
+            ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+            ${{ env.DOCKER_IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy:
-    needs: build-and-push
+    name: 🚀 Deploy sur VPS OVH
     runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
     steps:
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@master
+      - name: 📡 Connexion SSH et déploiement
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          port: 22
           script: |
+            # 1. Aller dans le dossier contenant le docker-compose.yml
             cd /home/ubuntu/homecyclhome/
-            docker pull lorlaviedevdesign/homecyclhome:latest
-            docker-compose down
-            docker-compose up -d
+            
+            # 2. Login Docker Hub pour pouvoir pull
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+            # 3. Mettre à jour l'image et relancer les services définis dans docker-compose.yml
+            # On force le pull pour récupérer la nouvelle image versionnée
+            docker pull ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+            
+            # 4. On redéploie avec docker-compose (il va automatiquement utiliser la dernière image pullée)
+            docker-compose pull
+            docker-compose up -d --build
+            
+            # 5. Nettoyage
+            docker image prune -f
+            echo "✅ Déploiement terminé avec succès !"

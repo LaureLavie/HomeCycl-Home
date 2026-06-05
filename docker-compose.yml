@@ -2,18 +2,38 @@ version: '3.8'
 
 services:
   app:
-    image: lorlaviedevdesign/homecyclhome:latest
+    build: .
     container_name: homecyclhome_app
     restart: always
     ports:
-      - "3000:3000"
+      - "3000:3000"   
+    env_file:
+      - .env
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=${DATABASE_URL}
-      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: postgres:16-alpine
+    container_name: homecyclhome_db
+    restart: always
+    environment:
+      POSTGRES_DB: homecyclhome
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  postgres_data:
