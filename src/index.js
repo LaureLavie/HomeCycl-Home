@@ -2,17 +2,17 @@
 // Compétence CDA : Installer et configurer son environnement de travail
 import express from 'express';
 import dotenv from 'dotenv';
-import authRouter from './routes/authRoute';
-import { clientRouter } from './routes/clientRoute';
-import { entrepriseRouter } from './routes/entrepriseRoute';
-import { userRouter } from './routes/userRoute';
+import authRouter from './routes/authRoute.js';
+import { clientRouter } from './routes/clientRoute.js';
+import { entrepriseRouter } from './routes/entrepriseRoute.js';
+import { userRouter } from './routes/userRoute.js';
 import {
   interventionRouter,
   forfaitRouter,
   produitRouter,
   zoneRouter,
   planningRouter,
-} from './routes/interventionRoute';
+} from './routes/interventionRoute.js';
 
 dotenv.config();
 

@@ -1,7 +1,7 @@
 // ENT-02 : CRUD informations entreprise
 // Compétence CDA : Développer des composants d'accès aux données SQL
 // Compétence CDA : Développer des composants métier
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma.js';
 
 // ─────────────────────────────────────────────
 // ENT-02 : GET — Récupère les infos de l'entreprise

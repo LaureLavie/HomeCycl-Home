@@ -1,9 +1,9 @@
 // Sprint 4 — Routes : Interventions, Forfaits, Produits, Zones, Planning
 // Compétence CDA : Développer des composants métier — Architecture REST
 import express from 'express';
-import { auth } from '../middlewares/auth';
-import { authorize } from '../middlewares/role';
-import * as ctrl from '../controllers/interventionController';
+import { auth } from '../middlewares/auth.js';
+import { authorize } from '../middlewares/role.js';
+import * as ctrl from '../controllers/interventionController.js';
 
 // ═════════════════════════════════════════════
 // ROUTES INTERVENTIONS — US-07

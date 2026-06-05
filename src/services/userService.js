@@ -1,8 +1,8 @@
 // USER-02 : CRU informations utilisateurs (vue Admin)
 // Compétence CDA : Développer des composants d'accès aux données SQL
 // Compétence CDA : Développer des composants métier
-import { prisma } from '../lib/prisma';
-import { hashPassword } from '../utils/auth';
+import { prisma } from '../lib/prisma.js';
+import { hashPassword } from '../utils/auth.js';
 
 // ─────────────────────────────────────────────
 // USER-02 : GET ALL — Liste paginée de tous les utilisateurs

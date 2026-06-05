@@ -2,7 +2,7 @@
 // Compétence CDA : Développer des composants d'accès aux données SQL
 // Architecture : Le GeoJSON des polygones dessinés par l'admin via Leaflet/Geoman IO
 //                est stocké en TEXT dans la colonne `geojson` (PostgreSQL natif JSON)
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma.js';
 
 // ─────────────────────────────────────────────
 // GET ALL — Liste toutes les zones avec techniciens assignés

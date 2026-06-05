@@ -1,9 +1,9 @@
 // AUTH-03 à AUTH-08 : Définition des routes d'authentification
 // Compétence CDA : Développer des composants métier — Architecture REST
 import express from 'express';
-import { auth } from '../middlewares/auth';
-import { authorize } from '../middlewares/role';
-import * as authController from '../controllers/authController';
+import { auth } from '../middlewares/auth.js';
+import { authorize } from '../middlewares/role.js';
+import * as authController from '../controllers/authController.js';
 
 const authRouter = express.Router();
 

@@ -1,6 +1,6 @@
 // INTERV-12 : CRU Produits additionnels
 // Compétence CDA : Développer des composants d'accès aux données SQL
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma.js';
 
 // ─────────────────────────────────────────────
 // GET ALL — Liste des produits

@@ -1,7 +1,7 @@
 // AUTH-06 : Middleware d'authentification JWT
 // Compétence CDA : Développer des composants métier — Sécurité
-import { verifyToken } from '../utils/auth';
-import { isTokenBlacklisted } from '../services/authService';
+import { verifyToken } from '../utils/auth.js';
+import { isTokenBlacklisted } from '../services/authService.js';
 
 /**
  * Vérifie que le token JWT est présent, valide et non révoqué.

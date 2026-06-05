@@ -2,7 +2,7 @@
 // Compétence CDA : Développer des composants d'accès aux données SQL
 // Note : R = Read (lecture), U = Update (mise à jour)
 // La création client passe par le signup (US-02)
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma.js';
 
 // ─────────────────────────────────────────────
 // CLIENT-02 : GET ALL — Liste paginée des clients avec recherche

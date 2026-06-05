@@ -1,7 +1,7 @@
 // INTERV-16/17 : Affichage planning et liste techniciens
 // Compétence CDA : Développer des composants d'accès aux données SQL
 // Compétence CDA : Développer des composants métier (modèle de planification)
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma.js';
 
 // ─────────────────────────────────────────────
 // GET — Planning d'un technicien (vue calendrier)

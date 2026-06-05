@@ -1,6 +1,6 @@
 // INTERV-07 : CRU Forfaits (tarifs des interventions)
 // Compétence CDA : Développer des composants d'accès aux données SQL
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma.js';
 
 // ─────────────────────────────────────────────
 // GET ALL — Liste des forfaits actifs (+ inactifs pour l'admin)
