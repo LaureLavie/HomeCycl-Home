@@ -416,3 +416,161 @@ export const photoMetaSchema = z.object({
     invalid_type_error: "Le type doit être AVANT, APRES ou DETAIL",
   }),
 });
+
+// ─────────────────────────────────────────────
+// US-21 : Création d'une réservation — RESA-01/02
+// Le client sélectionne forfait + créneau + vélo
+// ─────────────────────────────────────────────
+
+export const createReservationSchema = z.object({
+  // Coordonnées de l'intervention
+  adresse_intervention: z
+    .string({ required_error: "L'adresse d'intervention est obligatoire" })
+    .min(5, "Adresse trop courte")
+    .max(255),
+  code_postal_intervention: z
+    .string({ required_error: 'Le code postal est obligatoire' })
+    .regex(/^\d{5}$/, 'Code postal invalide (5 chiffres)'),
+  ville_intervention: z
+    .string({ required_error: 'La ville est obligatoire' })
+    .max(255),
+
+  // Créneau souhaité
+  date_intervention: z
+    .string({ required_error: 'La date est obligatoire' })
+    .datetime({ message: 'Format de date invalide (ISO 8601)' }),
+
+  // Sélections obligatoires
+  id_forfait: z.string({ required_error: 'Le forfait est obligatoire' }).uuid('ID forfait invalide'),
+  id_velo: z.string({ required_error: 'Le vélo est obligatoire' }).uuid('ID vélo invalide'),
+
+  // Optionnels — déduits côté serveur (zone depuis adresse, technicien depuis zone)
+  id_zone: z.string().uuid().optional(),
+  id_technicien: z.string().uuid().optional(),
+
+  // Produits additionnels sélectionnés au moment de la réservation
+  produits: z
+    .array(
+      z.object({
+        id_produit: z.string().uuid('ID produit invalide'),
+        quantite: z.number().int().min(1).default(1),
+      })
+    )
+    .optional()
+    .default([]),
+
+  // Commentaire libre du client (ex : "il faudra sonner deux fois")
+  commentaire: z.string().max(500).optional(),
+});
+
+// ─────────────────────────────────────────────
+// US-22 : Annulation d'une réservation — RESA-07
+// ─────────────────────────────────────────────
+
+export const annulerReservationSchema = z.object({
+  motif: z
+    .string()
+    .max(500, 'Le motif ne doit pas dépasser 500 caractères')
+    .optional(),
+});
+
+// ─────────────────────────────────────────────
+// US-23 : Création de compte client — RESA-09/10
+// (Données complémentaires après première réservation)
+// ─────────────────────────────────────────────
+
+export const finaliserInscriptionSchema = z.object({
+  email: z
+    .string({ required_error: "L'email est obligatoire" })
+    .email("Format d'email invalide")
+    .max(50),
+  mot_passe: z
+    .string({ required_error: 'Le mot de passe est obligatoire' })
+    .min(8, 'Minimum 8 caractères')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      'Le mot de passe doit contenir au moins une minuscule, une majuscule et un chiffre'
+    ),
+  nom: z.string({ required_error: 'Le nom est obligatoire' }).min(1).max(50),
+  prenom: z.string({ required_error: 'Le prénom est obligatoire' }).min(1).max(50),
+  telephone: z.string().max(20).optional(),
+
+  // Adresse principale du client (pré-remplie depuis la réservation)
+  adresse: z
+    .string({ required_error: "L'adresse est obligatoire" })
+    .max(255),
+  code_postal: z
+    .string({ required_error: 'Le code postal est obligatoire' })
+    .regex(/^\d{5}$/, 'Code postal invalide'),
+  ville: z
+    .string({ required_error: 'La ville est obligatoire' })
+    .max(255),
+
+  // UUID de la réservation temporaire à rattacher au compte créé
+  id_intervention_temp: z.string().uuid().optional(),
+});
+
+// ─────────────────────────────────────────────
+// US-24 : Modification du profil client — RESA-12/13
+// ─────────────────────────────────────────────
+
+export const updateProfilClientSchema = z.object({
+  nom: z.string().min(1).max(50).optional(),
+  prenom: z.string().min(1).max(50).optional(),
+  telephone: z.string().max(20).optional(),
+  adresse: z.string().max(255).optional(),
+  code_postal: z
+    .string()
+    .regex(/^\d{5}$/, 'Code postal invalide')
+    .optional()
+    .or(z.literal('')),
+  ville: z.string().max(255).optional(),
+});
+
+// ─────────────────────────────────────────────
+// US-25 : Gestion des cycles (vélos) — RESA-15/16
+// ─────────────────────────────────────────────
+
+export const createVeloSchema = z.object({
+  marque: z
+    .string({ required_error: 'La marque est obligatoire' })
+    .min(1)
+    .max(50),
+  modele: z
+    .string({ required_error: 'Le modèle est obligatoire' })
+    .min(1)
+    .max(100),
+  annee: z
+    .number({ required_error: "L'année est obligatoire" })
+    .int()
+    .min(1900, 'Année invalide')
+    .max(new Date().getFullYear() + 1, 'Année dans le futur'),
+  type_velo: z
+    .string({ required_error: 'Le type de vélo est obligatoire' })
+    .max(100),
+  // Données optionnelles Bike Index
+  numero_serie: z.string().max(100).optional(),
+});
+
+export const updateVeloSchema = createVeloSchema.partial();
+
+// ─────────────────────────────────────────────
+// Pagination pour les listes client
+// ─────────────────────────────────────────────
+
+export const paginationClientSchema = z.object({
+  page: z
+    .string()
+    .regex(/^\d+$/)
+    .transform(Number)
+    .refine((n) => n >= 1)
+    .optional()
+    .default('1'),
+  limit: z
+    .string()
+    .regex(/^\d+$/)
+    .transform(Number)
+    .refine((n) => n >= 1 && n <= 50)
+    .optional()
+    .default('10'),
+});

@@ -15,6 +15,15 @@ import {
   zoneRouter,
   planningRouter,
 } from './routes/interventionRoute.js';
+import {
+  reservationRouter,
+  inscriptionRouter,
+  profilRouter,
+  veloRouter,
+  historiqueRouter,
+} from './routes/reservationRoute.js';
+
+
 
 dotenv.config();
 
@@ -47,6 +56,11 @@ app.use('/api/produit', produitRouter);
 app.use('/api/zone', zoneRouter);
 app.use('/api/planning', planningRouter);
 app.use('/api/technicien', techRouter);
+app.use('/api/reservations',reservationRouter);
+app.use('/api/inscription', inscriptionRouter);
+app.use('/api/client/profil',   profilRouter);
+app.use('/api/client/velos',       veloRouter);
+app.use('/api/client/historique',  historiqueRouter);
 
 // Chemin pour servir les fichiers statiques (ex : images uploadées)
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
