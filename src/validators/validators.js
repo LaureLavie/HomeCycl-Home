@@ -574,3 +574,157 @@ export const paginationClientSchema = z.object({
     .optional()
     .default('10'),
 });
+
+
+// ─────────────────────────────────────────────
+// US-27 : Modèle de planification de base — PLAN-01
+// Définit la structure d'une journée de travail d'un technicien
+// ─────────────────────────────────────────────
+
+export const createModelePlanificationSchema = z.object({
+  nom: z
+    .string({ required_error: 'Le nom du modèle est obligatoire' })
+    .min(1, 'Le nom est obligatoire')
+    .max(50, 'Le nom ne doit pas dépasser 50 caractères'),
+
+  description: z.string().max(500).optional(),
+
+  // Heure de début de journée (ex: "08:00")
+  // Stockée en DateTime dans Prisma — on envoie une heure de référence
+  heure_debut: z
+    .string({ required_error: "L'heure de début est obligatoire" })
+    .regex(
+      /^([01]\d|2[0-3]):([0-5]\d)$/,
+      "Format invalide — attendu HH:MM (ex: 08:00)"
+    ),
+
+  // Heure de fin de journée (ex: "18:00")
+  heure_fin: z
+    .string({ required_error: "L'heure de fin est obligatoire" })
+    .regex(
+      /^([01]\d|2[0-3]):([0-5]\d)$/,
+      "Format invalide — attendu HH:MM (ex: 18:00)"
+    ),
+
+  // Durée de la pause déjeuner en minutes (ex: 60)
+  duree_pause: z
+    .number({ required_error: 'La durée de pause est obligatoire' })
+    .int()
+    .min(0, 'La durée de pause ne peut pas être négative')
+    .max(180, 'La durée de pause ne peut pas dépasser 3h'),
+
+  actif: z.boolean().default(true),
+}).refine(
+  (data) => {
+    // Vérifie que heure_fin > heure_debut
+    const [hDebut, mDebut] = data.heure_debut.split(':').map(Number);
+    const [hFin, mFin] = data.heure_fin.split(':').map(Number);
+    return hFin * 60 + mFin > hDebut * 60 + mDebut;
+  },
+  {
+    message: "L'heure de fin doit être postérieure à l'heure de début",
+    path: ['heure_fin'],
+  }
+);
+
+export const updateModelePlanificationSchema = z.object({
+  nom: z.string().min(1).max(50).optional(),
+  description: z.string().max(500).optional(),
+  heure_debut: z
+    .string()
+    .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Format HH:MM attendu')
+    .optional(),
+  heure_fin: z
+    .string()
+    .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Format HH:MM attendu')
+    .optional(),
+  duree_pause: z.number().int().min(0).max(180).optional(),
+  actif: z.boolean().optional(),
+});
+
+// ─────────────────────────────────────────────
+// US-28 : Association modèle ↔ zone — PLAN-05
+// ─────────────────────────────────────────────
+
+export const createModeleZoneSchema = z.object({
+  id_modele_planification: z
+    .string({ required_error: 'Le modèle de planification est obligatoire' })
+    .uuid('ID modèle invalide'),
+
+  id_zone: z
+    .string({ required_error: 'La zone géographique est obligatoire' })
+    .uuid('ID zone invalide'),
+
+  // Temps de déplacement entre interventions dans cette zone (en minutes)
+  buffer_deplacement: z
+    .number({ required_error: 'Le temps de déplacement est obligatoire' })
+    .int()
+    .min(0, 'Le temps de déplacement ne peut pas être négatif')
+    .max(120, 'Le temps de déplacement ne peut pas dépasser 2h'),
+
+  // Nombre maximum d'interventions par jour dans cette zone
+  max_intervention_jour: z
+    .number({ required_error: 'Le nombre max d\'interventions est obligatoire' })
+    .int()
+    .min(1, 'Minimum 1 intervention par jour')
+    .max(20, 'Maximum 20 interventions par jour'),
+});
+
+export const updateModeleZoneSchema = z.object({
+  buffer_deplacement: z.number().int().min(0).max(120).optional(),
+  max_intervention_jour: z.number().int().min(1).max(20).optional(),
+});
+
+// ─────────────────────────────────────────────
+// US-29 : Affectation modèle → technicien — PLAN-09
+// ─────────────────────────────────────────────
+
+export const affecterTechnicienSchema = z.object({
+  id_technicien: z
+    .string({ required_error: 'Le technicien est obligatoire' })
+    .uuid('ID technicien invalide'),
+
+  id_modele_planification: z
+    .string({ required_error: 'Le modèle de planification est obligatoire' })
+    .uuid('ID modèle invalide'),
+});
+
+// ─────────────────────────────────────────────
+// US-30 : Vérification durée forfaits — PLAN-12
+// (Le champ duree_minutes existe déjà dans Forfait — juste validation)
+// ─────────────────────────────────────────────
+
+export const updateForfaitDureeSchema = z.object({
+  duree_minutes: z
+    .number({ required_error: 'La durée est obligatoire' })
+    .int()
+    .min(15, 'Durée minimale : 15 minutes')
+    .max(480, 'Durée maximale : 8 heures (480 minutes)'),
+});
+
+// ─────────────────────────────────────────────
+// US-31 : Génération des créneaux disponibles — PLAN-13
+// Paramètres de recherche de créneaux
+// ─────────────────────────────────────────────
+
+export const rechercheCreneauxSchema = z.object({
+  // Identifiant du forfait sélectionné (pour connaître la durée)
+  id_forfait: z
+    .string({ required_error: 'Le forfait est obligatoire' })
+    .uuid('ID forfait invalide'),
+
+  // Zone géographique du client (adresse → zone)
+  id_zone: z
+    .string({ required_error: 'La zone est obligatoire' })
+    .uuid('ID zone invalide'),
+
+  // Fenêtre de recherche (par défaut : 7 prochains jours)
+  date_debut: z
+    .string({ required_error: 'La date de début est obligatoire' })
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format attendu : YYYY-MM-DD'),
+
+  date_fin: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format attendu : YYYY-MM-DD')
+    .optional(),
+});
