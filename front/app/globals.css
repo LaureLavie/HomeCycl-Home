@@ -1,0 +1,850 @@
+/* ============================================================================
+   HomeCycl'Home — Feuille de style de base
+   ----------------------------------------------------------------------------
+   Référence : Charte graphique & identité visuelle HomeCycl'Home (v1.0)
+   Porteur    : Laure Lavie — CDA IA, La Fabrique Numérique Paloise (Pau)
+
+   SOMMAIRE
+   1. Polices (import + fallback)
+   2. Design tokens (@layer tokens)      → couleurs, typo, espacements, rayons
+   3. Reset (@layer reset)
+   4. Base (@layer base)                 → éléments HTML natifs
+   5. Layout (@layer layout)             → container, grilles, sections
+   6. Composants (@layer components)     → header, boutons, hero, cards, forms...
+   7. Utilitaires (@layer utilities)
+   8. Accessibilité & media queries transverses
+
+   Cette feuille est écrite avec des @layer CSS : cela garantit que l'ordre
+   de spécificité reste prévisible (tokens < reset < base < layout <
+   components < utilities), quel que soit l'ordre d'écriture des sélecteurs.
+   ============================================================================ */
+
+   @layer reset, tokens, base, layout, components, utilities;
+
+   /* ----------------------------------------------------------------------------
+      1. POLICES
+      La charte impose 2 polices maximum :
+        - Titres & logo  : Kodchasan (700/600)
+        - Corps de texte & menus : Syne (400/500/700)
+      À placer idéalement en <link> dans le <head> pour la performance
+      (preconnect + display=swap) :
+   
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@500;600;700&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+   
+   ---------------------------------------------------------------------------- */
+   @import url('https://fonts.googleapis.com/css2?family=Kodchasan:wght@500;600;700&family=Syne:wght@400;500;600;700&display=swap');
+   
+   /* ============================================================================
+      2. DESIGN TOKENS
+      ============================================================================ */
+   @layer tokens {
+     :root {
+       /* ---- Couleurs — issues directement de la charte graphique ---- */
+       --color-primary-accent: #56df5c;   /* Vert écologie   — CTA, liens actifs, accents  */
+       --color-primary-accent-dark: #2f8f38; /* dérivé pour hover/contraste AA sur fond clair */
+       --color-secondary-accent: #644932; /* Marron terre    — header, footer, ancrage local */
+       --color-secondary-accent-dark: #4a3524;
+       --color-neutral: #b0b0b0;          /* Gris clair      — bordures, texte secondaire   */
+       --color-neutral-accent: #bc5e00;   /* Caramel         — alertes, statuts "attention" */
+       --color-bg: #f8f5f0;               /* Beige           — fond général                 */
+       --color-bg-elevated: #ffffff;      /* Fond des cartes/formulaires                    */
+       --color-text: #2c2c2c;             /* Gris foncé      — texte principal              */
+       --color-text-muted: #6b6b6b;
+       --color-text-inverse: #ffffff;
+   
+       /* États sémantiques dérivés de la palette (pas de couleurs hors charte) */
+       --color-success: var(--color-primary-accent);
+       --color-warning: var(--color-neutral-accent);
+       --color-danger: #b3412c; /* même famille chaude que le caramel, plus rouge */
+   
+       /* ---- Typographie ---- */
+       --font-display: 'Kodchasan', 'Segoe UI', system-ui, sans-serif; /* Titres & logo */
+       --font-body: 'Syne', 'Segoe UI', system-ui, sans-serif;         /* Texte & menus */
+   
+       --fs-100: 0.75rem;   /* 12px — mentions légales, labels */
+       --fs-200: 0.875rem;  /* 14px — texte secondaire */
+       --fs-300: 1rem;      /* 16px — texte courant */
+       --fs-400: 1.125rem;  /* 18px — intro / lead */
+       --fs-500: 1.5rem;    /* 24px — h3 */
+       --fs-600: 2rem;      /* 32px — h2 */
+       --fs-700: clamp(2.25rem, 4vw + 1rem, 3.5rem);   /* h1 sections */
+       --fs-800: clamp(2.75rem, 5vw + 1rem, 4.5rem);   /* h1 hero */
+   
+       --lh-tight: 1.1;
+       --lh-heading: 1.25;
+       --lh-body: 1.6;
+   
+       --fw-regular: 400;
+       --fw-medium: 500;
+       --fw-semibold: 600;
+       --fw-bold: 700;
+   
+       /* ---- Espacements (échelle base 4px, rythme régulier) ---- */
+       --space-1: 0.25rem;  /* 4px */
+       --space-2: 0.5rem;   /* 8px */
+       --space-3: 0.75rem;  /* 12px */
+       --space-4: 1rem;     /* 16px */
+       --space-5: 1.5rem;   /* 24px */
+       --space-6: 2rem;     /* 32px */
+       --space-7: 3rem;     /* 48px */
+       --space-8: 4rem;     /* 64px */
+       --space-9: 6rem;     /* 96px */
+   
+       /* ---- Rayons — la charte demande des "formes arrondies : convivialité,
+          douceur, accessibilité (pas d'angles durs)" ---- */
+       --radius-sm: 0.5rem;
+       --radius-md: 1rem;
+       --radius-lg: 1.5rem;
+       --radius-pill: 999px;   /* boutons, badges */
+       --radius-circle: 50%;   /* icônes "Comment ça marche" */
+   
+       /* ---- Ombres — chaudes, dérivées du marron plutôt que du noir pur ---- */
+       --shadow-sm: 0 1px 2px rgba(44, 44, 44, 0.06);
+       --shadow-md: 0 8px 24px rgba(100, 73, 50, 0.12);
+       --shadow-lg: 0 16px 40px rgba(100, 73, 50, 0.18);
+   
+       /* ---- Transitions ---- */
+       --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+       --transition-fast: 150ms var(--ease-standard);
+       --transition-base: 250ms var(--ease-standard);
+   
+       /* ---- Layout ---- */
+       --container-max: 1280px;
+       --container-padding: var(--space-4);
+       --header-height: 4.5rem;
+   
+       /* ---- Z-index (échelle nommée, évite les valeurs magiques) ---- */
+       --z-header: 100;
+       --z-overlay: 200;
+       --z-modal: 300;
+       --z-toast: 400;
+     }
+   
+     /* Repères de points de rupture (documentation — non exploitables en var()
+        dans les media queries ; valeurs dupliquées en dur dans les @media) :
+        --bp-sm: 640px   (mobile large)
+        --bp-md: 768px   (tablette)
+        --bp-lg: 1024px  (desktop)
+        --bp-xl: 1280px  (desktop large) */
+   }
+   
+   /* ============================================================================
+      3. RESET — base moderne, minimaliste
+      ============================================================================ */
+   @layer reset {
+     *, *::before, *::after { box-sizing: border-box; }
+   
+     * { margin: 0; }
+   
+     html { -webkit-text-size-adjust: 100%; }
+   
+     body { min-height: 100vh; line-height: var(--lh-body); -webkit-font-smoothing: antialiased; }
+   
+     img, picture, svg, video { display: block; max-width: 100%; height: auto; }
+   
+     input, button, textarea, select { font: inherit; color: inherit; }
+   
+     button { background: none; border: none; cursor: pointer; }
+   
+     a { color: inherit; text-decoration: none; }
+   
+     ul, ol { list-style: none; padding: 0; }
+   
+     table { border-collapse: collapse; }
+   
+     fieldset { border: none; padding: 0; }
+   
+     #root, #__next { isolation: isolate; }
+   
+     @media (prefers-reduced-motion: reduce) {
+       *, *::before, *::after {
+         animation-duration: 0.01ms !important;
+         animation-iteration-count: 1 !important;
+         transition-duration: 0.01ms !important;
+         scroll-behavior: auto !important;
+       }
+     }
+   }
+   
+   /* ============================================================================
+      4. BASE — styles des éléments natifs
+      ============================================================================ */
+   @layer base {
+     html { scroll-behavior: smooth; font-size: 100%; }
+   
+     body {
+       background-color: var(--color-bg);
+       color: var(--color-text);
+       font-family: var(--font-body);
+       font-size: var(--fs-300);
+       font-weight: var(--fw-regular);
+     }
+   
+     h1, h2, h3, h4, h5, h6 {
+       font-family: var(--font-display);
+       font-weight: var(--fw-bold);
+       line-height: var(--lh-heading);
+       color: var(--color-text);
+       text-wrap: balance;
+     }
+   
+     h1 { font-size: var(--fs-700); line-height: var(--lh-tight); }
+     h2 { font-size: var(--fs-600); }
+     h3 { font-size: var(--fs-500); }
+     h4 { font-size: var(--fs-400); font-weight: var(--fw-semibold); }
+   
+     p { text-wrap: pretty; color: var(--color-text); }
+   
+     p + p { margin-top: var(--space-4); }
+   
+     small { font-size: var(--fs-100); color: var(--color-text-muted); }
+   
+     a {
+       transition: color var(--transition-fast);
+     }
+   
+     /* Focus clavier visible partout — non négociable pour l'accessibilité */
+     :focus-visible {
+       outline: 3px solid var(--color-primary-accent);
+       outline-offset: 2px;
+       border-radius: var(--radius-sm);
+     }
+   
+     ::selection {
+       background-color: var(--color-primary-accent);
+       color: var(--color-text-inverse);
+     }
+   }
+   
+   /* ============================================================================
+      5. LAYOUT — container, grilles, rythme des sections
+      ============================================================================ */
+   @layer layout {
+     .container {
+       width: 100%;
+       max-width: var(--container-max);
+       margin-inline: auto;
+       padding-inline: var(--container-padding);
+     }
+   
+     .section {
+       padding-block: var(--space-8);
+     }
+   
+     .section--tight {
+       padding-block: var(--space-6);
+     }
+   
+     .grid {
+       display: grid;
+       gap: var(--space-5);
+     }
+   
+     .grid--2 { grid-template-columns: repeat(1, 1fr); }
+     .grid--3 { grid-template-columns: repeat(1, 1fr); }
+     .grid--4 { grid-template-columns: repeat(1, 1fr); }
+   
+     .flex { display: flex; }
+     .flex-center { display: flex; align-items: center; justify-content: center; }
+     .flex-between { display: flex; align-items: center; justify-content: space-between; }
+     .flex-col { display: flex; flex-direction: column; }
+     .gap-2 { gap: var(--space-2); }
+     .gap-3 { gap: var(--space-3); }
+     .gap-4 { gap: var(--space-4); }
+     .gap-5 { gap: var(--space-5); }
+   
+     @media (min-width: 640px) {
+       .grid--2 { grid-template-columns: repeat(2, 1fr); }
+     }
+   
+     @media (min-width: 1024px) {
+       .grid--3 { grid-template-columns: repeat(3, 1fr); }
+       .grid--4 { grid-template-columns: repeat(4, 1fr); }
+       .section { padding-block: var(--space-9); }
+     }
+   }
+   
+   /* ============================================================================
+      6. COMPOSANTS
+      ============================================================================ */
+   @layer components {
+   
+     /* ---------- 6.1 Header / Navigation ---------- */
+     .site-header {
+       position: sticky;
+       top: 0;
+       z-index: var(--z-header);
+       display: flex;
+       align-items: center;
+       height: var(--header-height);
+       background-color: var(--color-bg);
+       border-bottom: 1px solid rgba(44, 44, 44, 0.06);
+     }
+   
+     .site-header__inner {
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       width: 100%;
+     }
+   
+     .logo {
+       font-family: var(--font-display);
+       font-weight: var(--fw-bold);
+       font-size: var(--fs-400);
+       color: var(--color-secondary-accent);
+     }
+   
+     .nav {
+       display: none;
+     }
+   
+     .nav__list {
+       display: flex;
+       align-items: center;
+       gap: var(--space-6);
+     }
+   
+     .nav__link {
+       font-family: var(--font-body);
+       font-weight: var(--fw-medium);
+       font-size: var(--fs-200);
+       color: var(--color-secondary-accent);
+       padding-block: var(--space-2);
+       position: relative;
+     }
+   
+     .nav__link:hover { color: var(--color-primary-accent-dark); }
+   
+     .nav__link--active {
+       color: var(--color-primary-accent-dark);
+     }
+   
+     .nav__link--active::after {
+       content: '';
+       position: absolute;
+       left: 0;
+       right: 0;
+       bottom: -2px;
+       height: 2px;
+       background-color: var(--color-primary-accent);
+       border-radius: var(--radius-pill);
+     }
+   
+     @media (min-width: 1024px) {
+       .nav { display: block; }
+     }
+   
+     /* ---------- 6.2 Boutons ---------- */
+     .btn {
+       display: inline-flex;
+       align-items: center;
+       justify-content: center;
+       gap: var(--space-2);
+       font-family: var(--font-body);
+       font-weight: var(--fw-semibold);
+       font-size: var(--fs-300);
+       padding: var(--space-3) var(--space-6);
+       border-radius: var(--radius-pill);
+       border: 2px solid transparent;
+       white-space: nowrap;
+       cursor: pointer;
+       transition: background-color var(--transition-fast),
+                   color var(--transition-fast),
+                   border-color var(--transition-fast),
+                   transform var(--transition-fast),
+                   box-shadow var(--transition-fast);
+     }
+   
+     .btn:active { transform: translateY(1px); }
+   
+     .btn--primary {
+       background-color: var(--color-secondary-accent);
+       color: var(--color-text-inverse);
+     }
+   
+     .btn--primary:hover {
+       background-color: var(--color-secondary-accent-dark);
+       box-shadow: var(--shadow-md);
+     }
+   
+     .btn--accent {
+       background-color: var(--color-primary-accent);
+       color: var(--color-secondary-accent-dark);
+     }
+   
+     .btn--accent:hover {
+       background-color: var(--color-primary-accent-dark);
+       color: var(--color-text-inverse);
+     }
+   
+     .btn--outline {
+       background-color: transparent;
+       border-color: currentColor;
+       color: var(--color-text-inverse);
+     }
+   
+     .btn--outline:hover {
+       background-color: var(--color-text-inverse);
+       color: var(--color-secondary-accent-dark);
+     }
+   
+     .btn--outline-dark {
+       background-color: transparent;
+       border-color: var(--color-secondary-accent);
+       color: var(--color-secondary-accent);
+     }
+   
+     .btn--outline-dark:hover {
+       background-color: var(--color-secondary-accent);
+       color: var(--color-text-inverse);
+     }
+   
+     .btn--ghost {
+       background: transparent;
+       color: var(--color-secondary-accent);
+       padding: var(--space-2) var(--space-3);
+     }
+   
+     .btn--sm { padding: var(--space-2) var(--space-4); font-size: var(--fs-200); }
+     .btn--block { width: 100%; }
+   
+     .btn:disabled {
+       opacity: 0.5;
+       cursor: not-allowed;
+     }
+   
+     /* ---------- 6.3 Hero ---------- */
+     .hero {
+       position: relative;
+       min-height: 32rem;
+       display: flex;
+       align-items: flex-end;
+       color: var(--color-text-inverse);
+       background-color: var(--color-secondary-accent-dark);
+       background-size: cover;
+       background-position: center;
+       overflow: hidden;
+     }
+   
+     .hero::before {
+       content: '';
+       position: absolute;
+       inset: 0;
+       background: linear-gradient(
+         180deg,
+         rgba(44, 33, 24, 0.15) 0%,
+         rgba(44, 33, 24, 0.55) 65%,
+         rgba(30, 22, 16, 0.85) 100%
+       );
+       z-index: 0;
+     }
+   
+     .hero__content {
+       position: relative;
+       z-index: 1;
+       padding-block: var(--space-8);
+       max-width: 40rem;
+     }
+   
+     .hero__title {
+       font-size: var(--fs-800);
+       color: var(--color-text-inverse);
+       margin-bottom: var(--space-4);
+     }
+   
+     .hero__title mark {
+       background: none;
+       color: var(--color-primary-accent);
+     }
+   
+     .hero__lead {
+       font-size: var(--fs-400);
+       color: rgba(255, 255, 255, 0.9);
+       max-width: 34rem;
+       margin-bottom: var(--space-6);
+     }
+   
+     .hero__actions {
+       display: flex;
+       flex-wrap: wrap;
+       gap: var(--space-3);
+     }
+   
+     /* ---------- 6.4 Étapes ("Comment ça marche") ---------- */
+     .steps {
+       text-align: center;
+     }
+   
+     .steps__title {
+       margin-bottom: var(--space-2);
+     }
+   
+     .steps__title::after {
+       content: '';
+       display: block;
+       width: 3rem;
+       height: 3px;
+       margin: var(--space-3) auto 0;
+       background-color: var(--color-primary-accent);
+       border-radius: var(--radius-pill);
+     }
+   
+     .step {
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       gap: var(--space-3);
+       text-align: center;
+     }
+   
+     .step__icon {
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       width: 3.5rem;
+       height: 3.5rem;
+       border-radius: var(--radius-circle);
+       background-color: var(--color-bg-elevated);
+       color: var(--color-primary-accent-dark);
+       box-shadow: var(--shadow-sm);
+       font-size: var(--fs-500);
+     }
+   
+     .step__title {
+       font-size: var(--fs-400);
+     }
+   
+     .step__text {
+       color: var(--color-text-muted);
+       font-size: var(--fs-200);
+     }
+   
+     /* ---------- 6.5 Cartes (vélos acceptés, forfaits...) ---------- */
+     .card {
+       position: relative;
+       border-radius: var(--radius-lg);
+       overflow: hidden;
+       background-color: var(--color-bg-elevated);
+       box-shadow: var(--shadow-sm);
+       transition: transform var(--transition-base), box-shadow var(--transition-base);
+     }
+   
+     .card:hover {
+       transform: translateY(-4px);
+       box-shadow: var(--shadow-md);
+     }
+   
+     .card--media {
+       aspect-ratio: 4 / 5;
+       color: var(--color-text-inverse);
+     }
+   
+     .card--media img {
+       width: 100%;
+       height: 100%;
+       object-fit: cover;
+     }
+   
+     .card--media::after {
+       content: '';
+       position: absolute;
+       inset: 0;
+       background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.65) 100%);
+     }
+   
+     .card__caption {
+       position: absolute;
+       left: var(--space-4);
+       right: var(--space-4);
+       bottom: var(--space-4);
+       z-index: 1;
+     }
+   
+     .card__caption .card__title { color: var(--color-text-inverse); }
+   
+     .card__body {
+       padding: var(--space-5);
+     }
+   
+     .card__title {
+       font-size: var(--fs-400);
+       margin-bottom: var(--space-1);
+     }
+   
+     .card__text {
+       font-size: var(--fs-200);
+       color: var(--color-text-muted);
+     }
+   
+     /* Grille de cartes asymétrique façon "Vélos acceptés" :
+        une grande carte + colonnes empilées */
+     .bike-grid {
+       display: grid;
+       gap: var(--space-4);
+       grid-template-columns: 1fr;
+     }
+   
+     @media (min-width: 768px) {
+       .bike-grid {
+         grid-template-columns: 1.2fr 1fr;
+         grid-template-rows: repeat(2, minmax(10rem, 1fr));
+       }
+       .bike-grid > .card:first-child { grid-row: 1 / span 2; }
+       .bike-grid__sub {
+         display: grid;
+         grid-template-columns: 1fr 1fr;
+         gap: var(--space-4);
+       }
+     }
+   
+     /* ---------- 6.6 Formulaires ---------- */
+     .form-group {
+       display: flex;
+       flex-direction: column;
+       gap: var(--space-2);
+       margin-bottom: var(--space-5);
+     }
+   
+     .form-label {
+       font-family: var(--font-body);
+       font-weight: var(--fw-semibold);
+       font-size: var(--fs-200);
+       color: var(--color-text);
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+     }
+   
+     .form-label__hint {
+       font-weight: var(--fw-medium);
+       color: var(--color-primary-accent-dark);
+       font-size: var(--fs-100);
+     }
+   
+     .form-input-wrapper {
+       position: relative;
+       display: flex;
+       align-items: center;
+     }
+   
+     .form-input {
+       width: 100%;
+       background-color: var(--color-bg-elevated);
+       border: 1px solid var(--color-neutral);
+       border-radius: var(--radius-md);
+       padding: var(--space-4);
+       padding-right: var(--space-8);
+       font-size: var(--fs-300);
+       color: var(--color-text);
+       transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+     }
+   
+     .form-input::placeholder { color: var(--color-neutral); }
+   
+     .form-input:focus {
+       outline: none;
+       border-color: var(--color-primary-accent);
+       box-shadow: 0 0 0 3px rgba(86, 223, 92, 0.25);
+     }
+   
+     .form-input--error {
+       border-color: var(--color-danger);
+     }
+   
+     .form-error {
+       font-size: var(--fs-100);
+       color: var(--color-danger);
+     }
+   
+     .form-input-icon {
+       position: absolute;
+       right: var(--space-4);
+       color: var(--color-neutral);
+       display: flex;
+       pointer-events: none;
+     }
+   
+     .form-divider {
+       display: flex;
+       align-items: center;
+       gap: var(--space-3);
+       color: var(--color-neutral);
+       font-size: var(--fs-100);
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+       margin-block: var(--space-5);
+     }
+   
+     .form-divider::before,
+     .form-divider::after {
+       content: '';
+       flex: 1;
+       height: 1px;
+       background-color: rgba(44, 44, 44, 0.1);
+     }
+   
+     /* ---------- 6.7 Écran d'authentification (split screen) ---------- */
+     .auth-split {
+       display: grid;
+       grid-template-columns: 1fr;
+       min-height: 100vh;
+     }
+   
+     .auth-split__visual {
+       position: relative;
+       display: none;
+       padding: var(--space-8);
+       color: var(--color-text-inverse);
+       background-color: var(--color-secondary-accent-dark);
+       background-size: cover;
+       background-position: center;
+     }
+   
+     .auth-split__visual::before {
+       content: '';
+       position: absolute;
+       inset: 0;
+       background: linear-gradient(
+         160deg,
+         rgba(44, 33, 24, 0.55) 0%,
+         rgba(30, 22, 16, 0.85) 100%
+       );
+     }
+   
+     .auth-split__visual-content {
+       position: relative;
+       z-index: 1;
+       display: flex;
+       flex-direction: column;
+       justify-content: space-between;
+       height: 100%;
+     }
+   
+     .auth-split__content {
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+       padding: var(--space-6);
+     }
+   
+     .auth-split__form {
+       width: 100%;
+       max-width: 26rem;
+       margin-inline: auto;
+     }
+   
+     @media (min-width: 768px) {
+       .auth-split { grid-template-columns: 1fr 1fr; }
+       .auth-split__visual { display: block; }
+       .auth-split__content { padding: var(--space-9); }
+     }
+   
+     /* Badge type "Entretien vélo garanti" */
+     .badge {
+       display: inline-flex;
+       align-items: center;
+       gap: var(--space-2);
+       padding: var(--space-2) var(--space-4);
+       border-radius: var(--radius-pill);
+       background-color: rgba(255, 255, 255, 0.12);
+       border: 1px solid rgba(255, 255, 255, 0.35);
+       font-size: var(--fs-100);
+       font-weight: var(--fw-semibold);
+       letter-spacing: 0.03em;
+       text-transform: uppercase;
+       color: var(--color-text-inverse);
+     }
+   
+     .badge__icon { color: var(--color-primary-accent); }
+   
+     /* ---------- 6.8 Footer ---------- */
+     .site-footer {
+       background-color: var(--color-secondary-accent);
+       color: rgba(255, 255, 255, 0.85);
+       padding-block: var(--space-8) var(--space-5);
+     }
+   
+     .site-footer a { color: rgba(255, 255, 255, 0.85); }
+     .site-footer a:hover { color: var(--color-primary-accent); }
+   
+     .footer-grid {
+       display: grid;
+       gap: var(--space-6);
+       grid-template-columns: 1fr;
+       margin-bottom: var(--space-6);
+     }
+   
+     .footer-grid__title {
+       font-family: var(--font-display);
+       color: var(--color-text-inverse);
+       font-size: var(--fs-400);
+       margin-bottom: var(--space-3);
+     }
+   
+     .footer-newsletter {
+       display: flex;
+       gap: var(--space-2);
+     }
+   
+     .footer-newsletter .form-input {
+       background-color: rgba(255, 255, 255, 0.08);
+       border-color: rgba(255, 255, 255, 0.25);
+       color: var(--color-text-inverse);
+       padding: var(--space-3) var(--space-4);
+     }
+   
+     .footer-newsletter .form-input::placeholder { color: rgba(255, 255, 255, 0.6); }
+   
+     .site-footer__bottom {
+       padding-top: var(--space-5);
+       border-top: 1px solid rgba(255, 255, 255, 0.15);
+       font-size: var(--fs-100);
+       color: rgba(255, 255, 255, 0.6);
+       text-align: center;
+     }
+   
+     @media (min-width: 768px) {
+       .footer-grid { grid-template-columns: repeat(3, 1fr); }
+     }
+   }
+   
+   /* ============================================================================
+      7. UTILITAIRES
+      ============================================================================ */
+   @layer utilities {
+     .text-center { text-align: center; }
+     .text-muted { color: var(--color-text-muted); }
+     .text-accent { color: var(--color-primary-accent-dark); }
+     .text-inverse { color: var(--color-text-inverse); }
+   
+     .mt-2 { margin-top: var(--space-2); }
+     .mt-3 { margin-top: var(--space-3); }
+     .mt-4 { margin-top: var(--space-4); }
+     .mt-5 { margin-top: var(--space-5); }
+     .mt-6 { margin-top: var(--space-6); }
+     .mb-2 { margin-bottom: var(--space-2); }
+     .mb-3 { margin-bottom: var(--space-3); }
+     .mb-4 { margin-bottom: var(--space-4); }
+     .mb-5 { margin-bottom: var(--space-5); }
+     .mb-6 { margin-bottom: var(--space-6); }
+   
+     .sr-only {
+       position: absolute;
+       width: 1px;
+       height: 1px;
+       padding: 0;
+       margin: -1px;
+       overflow: hidden;
+       clip: rect(0, 0, 0, 0);
+       white-space: nowrap;
+       border: 0;
+     }
+   
+     .visually-hide-mobile { display: none; }
+     @media (min-width: 768px) {
+       .visually-hide-mobile { display: revert; }
+     }
+   }
