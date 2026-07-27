@@ -1,5 +1,10 @@
 node_modules
-.env*
 .next
+.git
+Dockerfile
+.dockerignore
+npm-debug.log*
+README.md
+.env*.local
 /generated/prisma
 dist
