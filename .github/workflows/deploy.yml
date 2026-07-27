@@ -9,12 +9,13 @@ on:
       - main
 
 env:
-  DOCKER_IMAGE: lorlaviedevdesign/homecyclhome
+  FRONT_IMAGE: lorlaviedevdesign/front
+  BACK_IMAGE: lorlaviedevdesign/back
   DOCKER_TAG: ${{ github.sha }}
 
 jobs:
   build:
-    name: 🐳 Build & Push Docker Image
+    name: 🐳 Build & Push Docker Images
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout du code
@@ -29,14 +30,29 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: 🏗️ Build & Push image
+      # --- 1. BUILD & PUSH FRONTEND (NEXTJS) ---
+      - name: 🏗️ Build & Push Frontend (Next.js)
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./nextjs
+          file: ./nextjs/Dockerfile
           push: true
           tags: |
-            ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
-            ${{ env.DOCKER_IMAGE }}:latest
+            ${{ env.FRONT_IMAGE }}:${{ env.DOCKER_TAG }}
+            ${{ env.FRONT_IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # --- 2. BUILD & PUSH BACKEND (NODEJS) ---
+      - name: 🏗️ Build & Push Backend (Node.js)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./nodejs
+          file: ./nodejs/Dockerfile
+          push: true
+          tags: |
+            ${{ env.BACK_IMAGE }}:${{ env.DOCKER_TAG }}
+            ${{ env.BACK_IMAGE }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -60,14 +76,14 @@ jobs:
             # 2. Login Docker Hub pour pouvoir pull
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-            # 3. Mettre à jour l'image et relancer les services définis dans docker-compose.yml
-            # On force le pull pour récupérer la nouvelle image versionnée
-            docker pull ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+            # 3. Force le pull des nouvelles images versionnées
+            docker pull ${{ env.FRONT_IMAGE }}:${{ env.DOCKER_TAG }}
+            docker pull ${{ env.BACK_IMAGE }}:${{ env.DOCKER_TAG }}
             
-            # 4. On redéploie avec docker-compose (il va automatiquement utiliser la dernière image pullée)
+            # 4. Redéploiement avec docker-compose
             docker-compose pull
-            docker-compose up -d --build
-            
-            # 5. Nettoyage
+            docker-compose up -d
+
+            # 5. Nettoyage des anciennes images inutilisées
             docker image prune -f
-            echo "✅ Déploiement terminé avec succès !"
+            echo "✅ Déploiement du Front et du Back terminé avec succès !"

@@ -1,12 +1,28 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
-    container_name: homecyclhome_app
+  front:
+    image: lorlaviedevdesign/front:latest
+    container_name: homecyclhome_frontend
     restart: always
     ports:
-      - "3000:3000"   
+      - "3000:3001" 
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - back
+      - db
+    networks:
+      - app-network
+
+  back:
+    image: lorlaviedevdesign/back:latest
+    container_name: homecyclhome_backend
+    restart: always
+    ports:
+      - "5000:3000"   
     env_file:
       - .env
     environment:
