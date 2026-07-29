@@ -4,7 +4,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/services/authService";
 import { saveToken } from "@/lib/auth";
-import { MailIcon, LockIcon, ArrowRightIcon } from "./icons";
+import { MailIcon, LockIcon, ArrowRightIcon } from "./Icons";
 
 type FormState = {
   email: string;

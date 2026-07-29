@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import LoginForm from "../components/LoginForm";
-import { ShieldCheckIcon } from "../components/icons";
+import { ShieldCheckIcon } from "../components/Icons";
 
 export const metadata: Metadata = {
   title: "Connexion — HomeCycl'Home",
@@ -15,7 +15,7 @@ export default function LoginPage() {
       {/* Colonne gauche — visuel + accroche (masquée < 768px) */}
       <section
         className="auth-split__visual"
-        style={{ backgroundImage: "url(/images/login-hero.jpg)" }}
+        style={{ backgroundImage: "url(/images/login-hero.webp)" }}
       >
         <div className="auth-split__visual-content">
           <span className="auth-split__logo">HomeCycl&apos;Home</span>
