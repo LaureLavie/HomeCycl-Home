@@ -1,29 +1,24 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/services/authService";
 import { saveToken } from "@/lib/auth";
 import { MailIcon, LockIcon, ArrowRightIcon } from "./Icons";
 
-type FormState = {
-  email: string;
-  mot_passe: string;
-};
-
 export default function LoginForm() {
   const router = useRouter();
 
-  const [form, setForm] = useState<FormState>({ email: "", mot_passe: "" });
-  const [error, setError] = useState<string | null>(null);
+  const [form, setForm] = useState({ email: "", mot_passe: "" });
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);

@@ -2,11 +2,7 @@
 // pour un besoin aussi restreint. `currentColor` hérite la couleur CSS du
 // parent (ex: .form-input-icon { color: var(--color-neutral); }).
 
-type IconProps = {
-  size?: number;
-};
-
-export function MailIcon({ size = 18 }: IconProps) {
+export function MailIcon({ size = 18 } ) {
   return (
     <svg
       width={size}
@@ -24,7 +20,7 @@ export function MailIcon({ size = 18 }: IconProps) {
   );
 }
 
-export function LockIcon({ size = 18 }: IconProps) {
+export function LockIcon({ size = 18 }) {
   return (
     <svg
       width={size}
@@ -42,7 +38,7 @@ export function LockIcon({ size = 18 }: IconProps) {
   );
 }
 
-export function ArrowRightIcon({ size = 18 }: IconProps) {
+export function ArrowRightIcon({ size = 18 }) {
   return (
     <svg
       width={size}
@@ -60,7 +56,7 @@ export function ArrowRightIcon({ size = 18 }: IconProps) {
   );
 }
 
-export function ShieldCheckIcon({ size = 16 }: IconProps) {
+export function ShieldCheckIcon({ size = 16 }) {
   return (
     <svg
       width={size}
@@ -78,7 +74,7 @@ export function ShieldCheckIcon({ size = 16 }: IconProps) {
   );
 }
 
-export function CalendarIcon({ size = 22 }: IconProps) {
+export function CalendarIcon({ size = 22 }) {
   return (
     <svg
       width={size}
@@ -97,7 +93,7 @@ export function CalendarIcon({ size = 22 }: IconProps) {
   );
 }
 
-export function BikeIcon({ size = 22 }: IconProps) {
+export function BikeIcon({ size = 22 }) {
   return (
     <svg
       width={size}
@@ -118,7 +114,7 @@ export function BikeIcon({ size = 22 }: IconProps) {
   );
 }
 
-export function CheckCircleIcon({ size = 22 }: IconProps) {
+export function CheckCircleIcon({ size = 22 }) {
   return (
     <svg
       width={size}
@@ -136,7 +132,7 @@ export function CheckCircleIcon({ size = 22 }: IconProps) {
   );
 }
 
-export function WrenchIcon({ size = 16 }: IconProps) {
+export function WrenchIcon({ size = 16 }) {
   return (
     <svg
       width={size}
@@ -153,7 +149,7 @@ export function WrenchIcon({ size = 16 }: IconProps) {
   );
 }
 
-export function MenuIcon({ size = 20 }: IconProps) {
+export function MenuIcon({ size = 20 }) {
   return (
     <svg
       width={size}
@@ -169,7 +165,7 @@ export function MenuIcon({ size = 20 }: IconProps) {
   );
 }
 
-export function GlobeIcon({ size = 18 }: IconProps) {
+export function GlobeIcon({ size = 18 }) {
   return (
     <svg
       width={size}
@@ -187,7 +183,7 @@ export function GlobeIcon({ size = 18 }: IconProps) {
   );
 }
 
-export function ShareIcon({ size = 18 }: IconProps) {
+export function ShareIcon({ size = 18 }) {
   return (
     <svg
       width={size}

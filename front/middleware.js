@@ -19,12 +19,11 @@
 //    donc compatible Edge. Installer avec :
 //      npm install jose
 
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-type Role = "ADMIN" | "TECHNICIEN" | "CLIENT";
 
-const PROTECTED_ROUTES: Record<string, Role[]> = {
+const PROTECTED_ROUTES = {
   "/admin": ["ADMIN"],
   "/technicien": ["TECHNICIEN", "ADMIN"],
   "/client": ["CLIENT"],
@@ -33,7 +32,7 @@ const PROTECTED_ROUTES: Record<string, Role[]> = {
 // Encodé une seule fois au chargement du module (pas à chaque requête)
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
-export async function middleware(req: NextRequest) {
+export async function middleware(req) {
   const url = req.nextUrl.clone();
   const path = url.pathname;
 
@@ -55,11 +54,11 @@ export async function middleware(req: NextRequest) {
 
   try {
     const { payload } = await jwtVerify(token, secret);
-    const role = payload.role as Role | undefined;
+    const role = payload.role;
 
     const allowedRoles = PROTECTED_ROUTES[matchedRoute];
 
-    if (!role || !allowedRoles.includes(role)) {
+    if (!role || typeof role !== "string" || !allowedRoles.includes(role)) {
       url.pathname = "/login";
       return NextResponse.redirect(url);
     }
