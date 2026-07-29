@@ -1,3 +1,4 @@
+"use client";
 // Icônes SVG inline — évite d'ajouter une dépendance (lucide-react, etc.)
 // pour un besoin aussi restreint. `currentColor` hérite la couleur CSS du
 // parent (ex: .form-input-icon { color: var(--color-neutral); }).

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginUser } from "@/services/authService";
-import { saveToken } from "@/lib/auth";
+import { loginUser } from "../../services/authService.js";
+import { saveToken } from "../../lib/auth.js";
 import { MailIcon, LockIcon, ArrowRightIcon } from "./Icons";
 
 export default function LoginForm() {
@@ -44,6 +44,7 @@ export default function LoginForm() {
   };
 
   return (
+    
     <form className="auth-split__form" onSubmit={handleSubmit} noValidate>
       {error && (
         <p

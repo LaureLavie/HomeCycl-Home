@@ -1,11 +1,11 @@
-import{ Metadata } from "next";
+
 import Image from "next/image";
 import Link from "next/link";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { CalendarIcon, BikeIcon, CheckCircleIcon, WrenchIcon } from "./components/Icons";
 
-export const metadata = {
+export const Metadata = {
   title: "HomeCycl'Home — Votre vélo entretenu, chez vous",
   description:
     "L'atelier mobile qui redonne vie à votre monture sans que vous ayez à vous déplacer, à Lyon. Expertise artisanale et service premium.",
@@ -153,7 +153,6 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-
       <Footer />
     </>
   );
