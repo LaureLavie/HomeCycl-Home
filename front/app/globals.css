@@ -495,12 +495,28 @@
      .auth-split__title { color: var(--color-text-inverse); font-size: var(--fs-700); margin-bottom: var(--space-md); }
      .auth-split__lead { color: rgba(255,255,255,0.9); font-size: var(--fs-300); max-width: 26rem; }
    
-     .auth-split__content { display: flex; flex-direction: column; justify-content: center; padding: var(--space-lg); }
+     .auth-split__content {
+       display: flex;
+       flex-direction: column;
+       min-height: 100vh;
+       padding: var(--space-lg);
+     }
+   
+     /* Occupe l'espace disponible et centre le formulaire verticalement,
+        ce qui pousse naturellement .auth-split__footer tout en bas
+        (sans grille ni position absolue) */
+     .auth-split__form-wrapper {
+       flex: 1;
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+     }
+   
      .auth-split__form { width: 100%; max-width: 26rem; margin-inline: auto; }
    
      .auth-split__footer {
        display: flex; gap: var(--space-lg);
-       padding: var(--space-lg);
+       padding-block: var(--space-lg);
        font-size: var(--fs-100);
        color: var(--color-text-muted);
      }
@@ -508,7 +524,7 @@
      @media (min-width: 768px) {
        .auth-split { grid-template-columns: 1fr 1fr; }
        .auth-split__visual { display: block; }
-       .auth-split__content { padding: var(--space-xxl); }
+       .auth-split__content { padding-inline: var(--space-xxl); }
      }
    
      .badge {

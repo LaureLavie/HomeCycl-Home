@@ -1,121 +1,61 @@
-"use client";
+import type { Metadata } from "next";
+import Link from "next/link";
+import LoginForm from "../components/LoginForm";
+import { ShieldCheckIcon } from "../components/icons";
 
-import { cookies } from "next/headers";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { loginUser } from "@/services/auth";
-import { saveToken } from "@/lib/auth";
+export const metadata: Metadata = {
+  title: "Connexion — HomeCycl'Home",
+  description:
+    "Connectez-vous à votre espace HomeCycl'Home pour gérer vos rendez-vous vélo à domicile à Lyon.",
+};
 
 export default function LoginPage() {
-  const router = useRouter();
-
-  const [form, setForm] = useState({
-    email: "",
-    mot_passe: "",
-  });
-
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  cookies().set("hch_token", result.data.token, {
-    httpOnly: false, 
-    secure: true,
-    sameSite: "strict",
-    maxAge: 60 * 60 * 24, // 24h
-  });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    try {
-      const result = await loginUser(form.email, form.mot_passe);
-
-      // Sauvegarde du token JWT
-      saveToken(result.data.token);
-
-      // Redirection selon le rôle
-      router.push(result.redirect);
-
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
   return (
-    <main className="login-page">
-      {/* SECTION GAUCHE */}
-      <section className="login-hero">
-        <div className="login-hero-content">
-          <h1>HomeCycl’Home</h1>
-          <h2>L’Artisan du Vélo Lyonnais à votre porte.</h2>
-          <p>
-            Simplifiez l’entretien de votre vélo avec un service de qualité,
-            local et passionné. Nous nous déplaçons chez vous.
-          </p>
-          <span className="hero-badge">ENTRETIEN VÉLO GARANTI</span>
+    <main className="auth-split">
+      {/* Colonne gauche — visuel + accroche (masquée < 768px) */}
+      <section
+        className="auth-split__visual"
+        style={{ backgroundImage: "url(/images/login-hero.jpg)" }}
+      >
+        <div className="auth-split__visual-content">
+          <span className="auth-split__logo">HomeCycl&apos;Home</span>
+
+          <div>
+            <h1 className="auth-split__title">
+              L&apos;Artisan du Vélo Lyonnais, à votre porte.
+            </h1>
+            <p className="auth-split__lead">
+              Simplifiez l&apos;entretien de votre vélo avec un service de
+              qualité, local et passionné. Nous nous déplaçons chez vous.
+            </p>
+          </div>
+
+          <span className="badge">
+            <span className="badge__icon" aria-hidden="true">
+              <ShieldCheckIcon />
+            </span>
+            Entretien vélo garanti
+          </span>
         </div>
       </section>
 
-      {/* SECTION DROITE */}
-      <section className="login-form-section">
-        <div className="login-form-card">
-          <h3>Bon retour.</h3>
-          <p className="subtitle">
-            Accédez à votre garage virtuel et vos rendez-vous.
-          </p>
+      {/* Colonne droite — formulaire */}
+      <section className="auth-split__content">
+        <div className="auth-split__form-wrapper">
+          <div className="auth-split__form">
+            <h2>Bon retour.</h2>
+            <p className="text-muted" style={{ marginBottom: "var(--space-lg)" }}>
+              Accédez à votre garage virtuel et vos rendez-vous.
+            </p>
 
-          {error && <p className="error-message">{error}</p>}
-
-          <form onSubmit={handleSubmit}>
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="nom@exemple.com"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
-
-            <label>Mot de passe</label>
-            <input
-              type="password"
-              name="mot_passe"
-              placeholder="••••••••"
-              value={form.mot_passe}
-              onChange={handleChange}
-              required
-            />
-
-            <a className="forgot-link" href="#">
-              Oublié ?
-            </a>
-
-            <button className="btn-primary" type="submit" disabled={loading}>
-              {loading ? "Connexion…" : "Se connecter"}
-            </button>
-          </form>
-
-          <div className="divider">ou</div>
-
-          <a href="/signup" className="btn-secondary create-account">
-            Créer un compte client
-          </a>
+            <LoginForm />
+          </div>
         </div>
 
-        <footer className="login-footer">
-          <a href="/help">Aide</a>
-          <a href="/legal">Mentions légales</a>
-          <a href="/contact">Contact</a>
+        <footer className="auth-split__footer">
+          <Link href="/aide">Aide</Link>
+          <Link href="/mentions-legales">Mentions légales</Link>
+          <Link href="/contact">Contact</Link>
         </footer>
       </section>
     </main>
