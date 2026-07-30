@@ -1,10 +1,10 @@
 // front/app/inscription/page.jsx
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function InscriptionPage() {
+function InscriptionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id_intervention_temp = searchParams.get("id_intervention");
@@ -69,5 +69,12 @@ export default function InscriptionPage() {
         </button>
       </form>
     </main>
+  );
+}
+export default function InscriptionPage() {
+  return (
+    <Suspense fallback={<div className="container" style={{ textAlign: "center", paddingBlock: "var(--space-xl)" }}>Chargement...</div>}>
+      <InscriptionContent />
+    </Suspense>
   );
 }
