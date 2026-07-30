@@ -1,5 +1,5 @@
 // front/app/client/reservation/page.jsx
-import { apiFetch } from "@/lib/apiFetch";
+import { apiFetch } from "./lib/apiFetch";
 import ReservationWizard from "./ReservationWizard";
 
 export const metadata = { title: "Réserver — Client" };

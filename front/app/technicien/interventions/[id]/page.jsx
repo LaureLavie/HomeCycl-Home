@@ -1,5 +1,5 @@
 // front/app/technicien/interventions/[id]/page.jsx
-import { apiFetch } from "@/lib/apiFetch";
+import { apiFetch } from "./lib/apiFetch";
 import InterventionActions from "./InterventionActions";
 import ModifierForm from "./ModifierForm";
 import PhotoUpload from "./PhotoUpload";

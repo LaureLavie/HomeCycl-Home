@@ -1,5 +1,5 @@
 // front/app/client/dashboard/page.jsx
-import { apiFetch } from "@/lib/apiFetch";
+import { apiFetch } from "./lib/apiFetch";
 import Link from "next/link";
 
 export const metadata = { title: "Tableau de bord — Client" };

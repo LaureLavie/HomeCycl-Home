@@ -1,5 +1,5 @@
 // front/app/admin/clients/page.jsx
-import { apiFetch } from "@/lib/apiFetch";
+import { apiFetch } from "./lib/apiFetch";
 import ClientTable from "./ClientTable";
 
 export const metadata = { title: "Clients — Admin" };

@@ -1,5 +1,5 @@
 // front/app/admin/zones/page.jsx
-import { apiFetch } from "@/lib/apiFetch";
+import { apiFetch } from "./lib/apiFetch";
 import ZoneManager from "./ZoneManager";
 
 export const metadata = { title: "Zones géographiques — Admin" };

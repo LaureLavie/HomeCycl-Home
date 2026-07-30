@@ -1,5 +1,5 @@
 // front/app/admin/produits/page.jsx
-import { apiFetch } from "@/lib/apiFetch";
+import { apiFetch } from "./lib/apiFetch";
 import ProduitManager from "./ProduitManager";
 
 export const metadata = { title: "Produits — Admin" };

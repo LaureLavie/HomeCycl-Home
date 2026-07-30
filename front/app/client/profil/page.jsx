@@ -1,5 +1,5 @@
 // front/app/client/profil/page.jsx
-import { apiFetch } from "@/lib/apiFetch";
+import { apiFetch } from "./lib/apiFetch";
 import ProfilForm from "./ProfilForm";
 
 export const metadata = { title: "Mon profil — Client" };
