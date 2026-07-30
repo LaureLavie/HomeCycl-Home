@@ -1,5 +1,5 @@
 // front/app/admin/clients/[id]/page.jsx
-import { apiFetch } from "../../../../lib/apiFetch";
+import { apiFetch } from "@/lib/apiFetch";
 import ClientForm from "./ClientForm";
 
 export default async function ClientDetailPage({ params }) {

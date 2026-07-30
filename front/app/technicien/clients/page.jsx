@@ -1,6 +1,5 @@
 // front/app/technicien/clients/page.jsx
-import { apiFetch } from "../../../lib/apiFetch";
-
+import { apiFetch } from "@/lib/apiFetch";
 export const metadata = { title: "Mes clients — Technicien" };
 
 export default async function ClientsTechnicienPage() {

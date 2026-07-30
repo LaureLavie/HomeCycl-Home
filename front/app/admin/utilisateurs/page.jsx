@@ -1,5 +1,5 @@
 // front/app/admin/utilisateurs/page.jsx
-import { apiFetch } from "../../../lib/apiFetch";
+import { apiFetch } from "@/lib/apiFetch";
 import UserTable from "./UserTable";
 
 export const metadata = { title: "Utilisateurs — Admin" };

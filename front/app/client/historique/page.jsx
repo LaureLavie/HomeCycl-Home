@@ -1,6 +1,6 @@
 // front/app/api/client/velos/route.js
 import { NextResponse } from "next/server";
-import { apiFetch } from "../../../lib/apiFetch";
+import { apiFetch } from "@/lib/apiFetch";
 
 export async function POST(request) {
   const body = await request.json();

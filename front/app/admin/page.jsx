@@ -1,5 +1,5 @@
 // front/app/admin/page.jsx
-import { apiFetch } from "../../lib/apiFetch";
+import { apiFetch } from "@/lib/apiFetch";
 
 export const metadata = { title: "Tableau de bord — Admin" };
 

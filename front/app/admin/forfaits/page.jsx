@@ -1,5 +1,5 @@
 // front/app/admin/forfaits/page.jsx
-import { apiFetch } from "../../../lib/apiFetch";
+import { apiFetch } from "@/lib/apiFetch";
 import ForfaitManager from "./ForfaitManager";
 
 export const metadata = { title: "Forfaits — Admin" };

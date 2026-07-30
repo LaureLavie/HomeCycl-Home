@@ -1,5 +1,5 @@
 // front/app/admin/entreprise/page.jsx
-import { apiFetch } from "../../../lib/apiFetch";
+import { apiFetch } from "@/lib/apiFetch";
 import EntrepriseForm from "./EntrepriseForm";
 
 export const metadata = { title: "Entreprise — Admin" };
