@@ -8,6 +8,7 @@ import { clientRouter } from './routes/clientRoute.js';
 import { entrepriseRouter } from './routes/entrepriseRoute.js';
 import { userRouter } from './routes/userRoute.js';
 import { techRouter } from './routes/technicienRoute.js';
+import { creneauxRouter } from './routes/creneauxRoute.js';
 import {
   interventionRouter,
   forfaitRouter,
@@ -46,6 +47,7 @@ app.use((req, res, next) => {
 // ─────────────────────────────────────────────
 // Routes
 // ─────────────────────────────────────────────
+app.use('/api/creneaux', creneauxRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/entreprise', entrepriseRouter);
 app.use('/api/client', clientRouter);

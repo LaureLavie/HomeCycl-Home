@@ -5,6 +5,8 @@ import { auth } from '../middlewares/auth.js';
 import { authorize } from '../middlewares/role.js';
 import * as ctrl from '../controllers/interventionController.js';
 
+
+zoneRouter.get('/public', ctrl.getZonesGeoJson);
 // ═════════════════════════════════════════════
 // ROUTES INTERVENTIONS — US-07
 // Admin : CRUD complet
