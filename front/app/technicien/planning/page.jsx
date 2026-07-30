@@ -1,5 +1,5 @@
 // front/app/technicien/planning/page.jsx
-import { apiFetch } from "./lib/apiFetch";
+import { apiFetch } from "../../../lib/apiFetch";
 
 export const metadata = { title: "Mon planning — Technicien" };
 

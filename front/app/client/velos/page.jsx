@@ -1,5 +1,5 @@
 // front/app/client/velos/page.jsx
-import { apiFetch } from "./lib/apiFetch";
+import { apiFetch } from "../../../lib/apiFetch";
 import VeloManager from "./VeloManager";
 
 export const metadata = { title: "Mes vélos — Client" };

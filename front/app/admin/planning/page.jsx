@@ -1,5 +1,5 @@
 // front/app/admin/planning/page.jsx
-import { apiFetch } from "./lib/apiFetch";
+import { apiFetch } from "../../../lib/apiFetch";
 import PlanningView from "./PlanningView";
 
 export const metadata = { title: "Planning — Admin" };
