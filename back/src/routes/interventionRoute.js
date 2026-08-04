@@ -6,7 +6,6 @@ import { authorize } from '../middlewares/role.js';
 import * as ctrl from '../controllers/interventionController.js';
 
 
-zoneRouter.get('/public', ctrl.getZonesGeoJson);
 // ═════════════════════════════════════════════
 // ROUTES INTERVENTIONS — US-07
 // Admin : CRUD complet
@@ -122,6 +121,7 @@ produitRouter.delete('/:id',
 
 export const zoneRouter = express.Router();
 
+zoneRouter.get('/public', ctrl.getZonesGeoJson);
 // Endpoint dédié Leaflet — retourne le GeoJSON parsé
 // MAP-02 : à appeler au chargement de la carte
 zoneRouter.get('/geojson',
