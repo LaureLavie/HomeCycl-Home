@@ -11,8 +11,8 @@ const authRouter = express.Router();
 // Routes publiques (sans authentification)
 // ─────────────────────────────────────────────
 
-// US-02 : POST /api/auth/signup — Inscription
-authRouter.post('/signup', authController.signup);
+// US-02 : POST /api/auth/inscription — Inscription
+authRouter.post('/inscription', authController.signup);
 
 // US-03 : POST /api/auth/login — Connexion + génération JWT
 authRouter.post('/login', authController.login);

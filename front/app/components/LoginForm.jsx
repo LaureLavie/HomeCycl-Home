@@ -83,7 +83,7 @@ export default function LoginForm() {
       <div className="form-group">
         <label className="form-label" htmlFor="mot_passe">
           Mot de passe
-          <a className="form-label__hint" href="/mot-de-passe-oublie">
+          <a className="form-label__hint" href="/forgot-password">
             Oublié ?
           </a>
         </label>
@@ -130,7 +130,7 @@ export default function LoginForm() {
         Nouveau chez HomeCycl&apos;Home&nbsp;?
       </p>
 
-      <a href="/signup" className="btn btn-outline btn-block">
+      <a href="/inscription" className="btn btn-outline btn-block">
         Créer un compte client
       </a>
     </form>
