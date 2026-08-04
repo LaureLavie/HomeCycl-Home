@@ -1,13 +1,36 @@
-# DEV-04 : image Docker du frontend Next.js
-FROM node:20-alpine AS base
-
+# 1. Étape des dépendances
+FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
+# 2. Étape de construction (Build)
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-ENV PORT=3001
-EXPOSE 3001
+# 3. Étape de production finale (Légère)
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
+
+# Utilisateur non-privilégié pour la sécurité
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copie des fichiers nécessaires au démarrage
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+USER nextjs
+
+EXPOSE 3000
+
 CMD ["npm", "start"]

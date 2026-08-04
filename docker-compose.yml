@@ -13,7 +13,6 @@ services:
       - NODE_ENV=production
     depends_on:
       - back
-      - db
     networks:
       - app-network
 
@@ -22,34 +21,16 @@ services:
     container_name: homecyclhome_backend
     restart: always
     ports:
-      - "5000:5000"   
+      - "5000:5000"
     env_file:
       - .env
     environment:
       - NODE_ENV=production
-    depends_on:
-      - db
-    networks:
-      - app-network
-
-  db:
-    image: postgres:16-alpine
-    container_name: homecyclhome_db
-    restart: always
-    environment:
-      POSTGRES_DB: homecyclhome
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./uploads:/app/uploads
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  postgres_data:

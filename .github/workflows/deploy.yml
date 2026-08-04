@@ -76,14 +76,18 @@ jobs:
             # 2. Login Docker Hub pour pouvoir pull
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-            # 3. Force le pull des nouvelles images versionnées
+            # 3. Mettre à jour les variables d'environnement ou pull directement les tags exacts du commit
+            # On force le pull des images fraîchement buildées avec le SHA du commit
             docker pull ${{ env.FRONT_IMAGE }}:${{ env.DOCKER_TAG }}
             docker pull ${{ env.BACK_IMAGE }}:${{ env.DOCKER_TAG }}
-            
-            # 4. Redéploiement avec docker-compose
-            docker-compose pull
-            docker-compose up -d
 
-            # 5. Nettoyage des anciennes images inutilisées
+            # Optionnel mais propre : on re-tague localement en :latest pour que docker-compose pointe dessus
+            docker tag ${{ env.FRONT_IMAGE }}:${{ env.DOCKER_TAG }} ${{ env.FRONT_IMAGE }}:latest
+            docker tag ${{ env.BACK_IMAGE }}:${{ env.DOCKER_TAG }} ${{ env.BACK_IMAGE }}:latest
+            
+            # 4. Redéploiement à chaud des conteneurs
+            docker-compose up -d --remove-orphans
+
+            # 5. Nettoyage sécurisé des images orphelines (garde les images actives)
             docker image prune -f
             echo "✅ Déploiement du Front et du Back terminé avec succès !"

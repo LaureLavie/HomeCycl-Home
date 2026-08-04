@@ -9,7 +9,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# Si tu utilises Prisma, c'est ici qu'on génère le client
+# ⚠️ Assurez-vous d'avoir bien votre dossier prisma/ copié (inclus dans COPY . .)
 RUN npx prisma generate
 
 # 3. Étape de production finale
@@ -25,9 +25,12 @@ RUN adduser --system --uid 1001 nodeuser
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/package.json ./package.json
+# 💡 (Optionnel mais recommandé si Prisma tourne en prod) Copiez aussi le dossier prisma si nécessaire au runtime
+# COPY --from=builder /app/prisma ./prisma
 
 USER nodeuser
 
-EXPOSE 3000
+# CORRECTION ICI : Le backend écoute sur le port 5000 (et non 3000)
+EXPOSE 5000
 
 CMD ["npm", "start"]
