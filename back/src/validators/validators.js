@@ -442,7 +442,7 @@ export const createReservationSchema = z.object({
 
   // Sélections obligatoires
   id_forfait: z.string({ required_error: 'Le forfait est obligatoire' }).uuid('ID forfait invalide'),
-  id_velo: z.string({ required_error: 'Le vélo est obligatoire' }).uuid('ID vélo invalide'),
+  id_velo: z.string().uuid('ID vélo invalide').optional(),
 
   // Optionnels — déduits côté serveur (zone depuis adresse, technicien depuis zone)
   id_zone: z.string().uuid().optional(),
