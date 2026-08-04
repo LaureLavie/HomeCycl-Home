@@ -44,18 +44,18 @@ Projet réalisé dans le cadre de la formation "Concepteur Développeur d'Applic
 - Infrastructure (VPS / IAAS ou conteneurisée)
 - Pipeline CI/CD et documentation de déploiement
 
-## Architecture technique (suggestion)
+## Architecture technique
 - Backend : Node.js + Express (REST API)
 - Base de données : PostgreSQL (relationnelle)
-- ORM/accès données : TypeORM / Sequelize / Knex (au choix)
-- Stockage fichiers : système de fichiers ou objet (ex. S3)
+- ORM/accès données : Neon
+- Stockage fichiers : Neon
 - Authentification : JWT + roles
-- Frontend : React ou Nextjs
+- Frontend :Nextjs
 - Conteneurisation : Docker / docker-compose
 - CI/CD : GitHub Actions
-- Géocodage : API Leaflet
+- Géocodage : API Google Maps
 
-## Données principales (exemples)
+## Données principales
 - Users (id, nom, email, rôle, zone)
 - Technicians (profil, zones, disponibilités)
 - Interventions (client_id, technicien_id, adresse, forfait, statut, photos, date_heure, durée, prix)
@@ -82,13 +82,11 @@ Projet réalisé dans le cadre de la formation "Concepteur Développeur d'Applic
    - Éditer .env (DB, clés API, JWT_SECRET)
 4. Préparer la base :
    - Démarrer PostgreSQL (ou docker-compose up -d)
-   - Exécuter les migrations avec l'outil choisi 
+   - Exécuter les migrations 
 5. Lancer l'application en développement :
    - npm run dev
 6. Tests :
    - npm test
-
-(Remplacer les commandes de migration/exécution selon l'ORM et les scripts présents.)
 
 ## Plan indicatif (févr. - août 2026)
 - Février–Avril : analyse, maquettes, modélisation, cahier des charges
@@ -105,7 +103,7 @@ Projet réalisé dans le cadre de la formation "Concepteur Développeur d'Applic
 
 ## Déploiement
 - Conteneuriser services (Docker)
-- Déployer sur VPS / IAAS ou plateforme Cloud
+- Déployer sur VPS
 - Mettre en place sauvegardes DB et monitoring
 - Pipeline CI/CD pour automatiser builds, tests et déploiement
 
