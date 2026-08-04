@@ -69,7 +69,7 @@ export default function LoginPage() {
               required
             />
 
-            <a className="forgot-link" href="#">Oublié ?</a>
+            <a className="forgot-link" href="/forgot-password">Oublié ?</a>
 
             <button className="btn-primary" type="submit" disabled={loading}>
               {loading ? "Connexion…" : "Se connecter"}

@@ -1,7 +1,13 @@
-// AUTH-01 à AUTH-08 : Contrôleur d'authentification
+// AUTH-01 à AUTH-10 : Contrôleur d'authentification
 // Compétence CDA : Développer des composants métier + Interfaces utilisateur (API REST)
 import * as authService from '../services/authService.js';
-import { signupSchema, loginSchema, updateUserSchema } from '../validators/authValidator.js';
+import {
+  signupSchema,
+  loginSchema,
+  updateUserSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from '../validators/authValidator.js';
 
 // ─────────────────────────────────────────────
 // US-02 : POST /api/auth/signup — Inscription
@@ -125,6 +131,73 @@ export const getMe = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération du profil',
+    });
+  }
+};
+
+// ─────────────────────────────────────────────
+// AUTH-09 : POST /api/auth/forgot-password — Demande de réinitialisation
+// Route PUBLIQUE — réponse volontairement neutre (anti-énumération)
+// ─────────────────────────────────────────────
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const parsed = forgotPasswordSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      const errors = parsed.error.errors.map((e) => ({
+        field: e.path.join('.'),
+        message: e.message,
+      }));
+      return res.status(400).json({ success: false, message: 'Données invalides', errors });
+    }
+
+    const result = await authService.requestPasswordReset(parsed.data.email);
+
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+      // devResetLink n'existe qu'en développement (voir authService)
+      ...(result.devResetLink && { devResetLink: result.devResetLink }),
+    });
+  } catch (error) {
+    // On ne détaille jamais l'erreur ici : même en cas de souci interne,
+    // on renvoie un message générique pour ne pas exposer d'information.
+    return res.status(200).json({
+      success: true,
+      message: 'Si un compte existe avec cette adresse email, un lien de réinitialisation a été envoyé.',
+    });
+  }
+};
+
+// ─────────────────────────────────────────────
+// AUTH-10 : POST /api/auth/reset-password — Réinitialisation effective
+// Route PUBLIQUE — protégée par le token à usage unique (1h de validité)
+// ─────────────────────────────────────────────
+
+export const resetPassword = async (req, res) => {
+  try {
+    const parsed = resetPasswordSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      const errors = parsed.error.errors.map((e) => ({
+        field: e.path.join('.'),
+        message: e.message,
+      }));
+      return res.status(400).json({ success: false, message: 'Données invalides', errors });
+    }
+
+    const result = await authService.resetPassword(parsed.data.token, parsed.data.mot_passe);
+
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message || 'Erreur lors de la réinitialisation du mot de passe',
     });
   }
 };

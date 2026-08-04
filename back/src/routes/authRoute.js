@@ -1,4 +1,4 @@
-// AUTH-03 à AUTH-08 : Définition des routes d'authentification
+// AUTH-03 à AUTH-10 : Définition des routes d'authentification
 // Compétence CDA : Développer des composants métier — Architecture REST
 import express from 'express';
 import { auth } from '../middlewares/auth.js';
@@ -16,6 +16,12 @@ authRouter.post('/signup', authController.signup);
 
 // US-03 : POST /api/auth/login — Connexion + génération JWT
 authRouter.post('/login', authController.login);
+
+// AUTH-09 : POST /api/auth/forgot-password — Demande de lien de réinitialisation
+authRouter.post('/forgot-password', authController.forgotPassword);
+
+// AUTH-10 : POST /api/auth/reset-password — Réinitialisation avec token
+authRouter.post('/reset-password', authController.resetPassword);
 
 // ─────────────────────────────────────────────
 // Routes protégées (nécessitent un JWT valide)

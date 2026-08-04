@@ -1,7 +1,13 @@
-// AUTH-01 à AUTH-07 : Service métier d'authentification
+// AUTH-01 à AUTH-10 : Service métier d'authentification
 // Compétence CDA : Développer des composants métier + Accès aux données SQL
 import { prisma } from '../lib/prisma.js';
-import { hashPassword, comparePassword, generateToken } from '../utils/auth.js';
+import {
+  hashPassword,
+  comparePassword,
+  generateToken,
+  generateResetToken,
+  hashResetToken,
+} from '../utils/auth.js';
 
 // ─────────────────────────────────────────────
 // US-02 : Création de compte selon rôle
@@ -172,6 +178,86 @@ export const logoutUser = (token) => {
  */
 export const isTokenBlacklisted = (token) => {
   return tokenBlacklist.has(token);
+};
+
+// ─────────────────────────────────────────────
+// AUTH-09 : Demande de réinitialisation de mot de passe
+// US : "mot de passe oublié" — route publique
+//
+// SÉCURITÉ : la réponse est IDENTIQUE que l'email existe ou non
+// (anti-énumération de comptes). Seul le service d'envoi d'email
+// (hors-scope MVP) fait la différence, jamais la réponse HTTP.
+// ─────────────────────────────────────────────
+
+export const requestPasswordReset = async (email) => {
+  const user = await prisma.authentification.findUnique({ where: { email } });
+
+  const messagePublic =
+    'Si un compte existe avec cette adresse email, un lien de réinitialisation a été envoyé.';
+
+  if (!user || !user.actif) {
+    return { message: messagePublic };
+  }
+
+  const { rawToken, hashedToken } = generateResetToken();
+  const expires = new Date(Date.now() + 60 * 60 * 1000); // Validité : 1h
+
+  await prisma.authentification.update({
+    where: { id_authentification: user.id_authentification },
+    data: {
+      reset_password_token: hashedToken,
+      reset_password_expires: expires,
+    },
+  });
+
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const resetLink = `${frontendUrl}/reset-password?token=${rawToken}`;
+
+  // MVP : pas de provider d'envoi d'email branché → le lien est loggé serveur.
+  // Évolution prod : remplacer ce console.log par un appel à un service
+  // d'emailing transactionnel (Resend, SendGrid, Brevo...).
+  console.log(`🔑 [Reset password] Lien pour ${email} : ${resetLink}`);
+
+  return {
+    message: messagePublic,
+    // Exposé uniquement en dev, pour tester le flux sans service d'email réel
+    ...(process.env.NODE_ENV !== 'production' && { devResetLink: resetLink }),
+  };
+};
+
+// ─────────────────────────────────────────────
+// AUTH-10 : Réinitialisation effective du mot de passe
+// ─────────────────────────────────────────────
+
+export const resetPassword = async (token, nouveauMotDePasse) => {
+  const hashedToken = hashResetToken(token);
+
+  const user = await prisma.authentification.findFirst({
+    where: {
+      reset_password_token: hashedToken,
+      reset_password_expires: { gt: new Date() },
+    },
+  });
+
+  if (!user) {
+    const error = new Error('Lien de réinitialisation invalide ou expiré. Refaites une demande.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const mot_passe_hash = await hashPassword(nouveauMotDePasse);
+
+  await prisma.authentification.update({
+    where: { id_authentification: user.id_authentification },
+    data: {
+      mot_passe_hash,
+      // Le token est à usage unique : on le détruit immédiatement après usage
+      reset_password_token: null,
+      reset_password_expires: null,
+    },
+  });
+
+  return { message: 'Mot de passe réinitialisé avec succès. Vous pouvez vous connecter.' };
 };
 
 // ─────────────────────────────────────────────

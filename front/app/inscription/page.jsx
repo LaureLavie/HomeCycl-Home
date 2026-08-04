@@ -1,80 +1,208 @@
-// front/app/inscription/page.jsx
 "use client";
 
-import { useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signupUser } from "@/services/authService";
 
-function InscriptionContent() {
+// US-02 : Inscription (compte CLIENT uniquement — ADMIN/TECHNICIEN créés par l'admin)
+// Compétence CDA : Développer des composants métier — Interfaces utilisateur
+export default function SignupPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const id_intervention_temp = searchParams.get("id_intervention");
 
   const [form, setForm] = useState({
-    email: "", mot_passe: "", nom: "", prenom: "", telephone: "",
-    adresse: "", code_postal: "", ville: "",
+    nom: "",
+    prenom: "",
+    email: "",
+    telephone: "",
+    mot_passe: "",
+    confirmation: "",
+    adresse: "",
+    code_postal: "",
+    ville: "",
   });
+  const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState(null);
-  const [errors, setErrors] = useState([]);
-  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSaving(true);
     setError(null);
-    setErrors([]);
+    setFieldErrors({});
+
+    if (form.mot_passe !== form.confirmation) {
+      setError("Les mots de passe ne correspondent pas");
+      return;
+    }
+
+    setLoading(true);
     try {
-      const res = await fetch("/api/inscription/finaliser", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, id_intervention_temp }),
-      });
-      const result = await res.json();
-      if (!res.ok || !result.success) {
-        setErrors(result.errors || []);
-        throw new Error(result.message);
-      }
-      router.push(result.data.redirect || "/client/dashboard");
+      const { confirmation, ...payload } = form;
+      const result = await signupUser(payload);
+      router.push(result.redirect || "/client/dashboard");
       router.refresh();
     } catch (err) {
       setError(err.message);
+      // AUTH-04 : erreurs de validation Zod renvoyées champ par champ
+      if (err.errors) {
+        const mapped = {};
+        err.errors.forEach((fe) => {
+          mapped[fe.field] = fe.message;
+        });
+        setFieldErrors(mapped);
+      }
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
   };
 
   return (
-    <main className="container" style={{ maxWidth: "32rem", paddingBlock: "var(--space-xl)" }}>
-      <h1>Créez votre compte</h1>
-      <p className="text-muted">Votre réservation a été enregistrée. Finalisez la création de votre compte pour la confirmer.</p>
+    <main className="login-page">
+      <section className="login-hero">
+        <div className="login-hero-content">
+          <h1>HomeCycl’Home</h1>
+          <h2>Rejoignez le garage virtuel lyonnais.</h2>
+          <p>
+            Créez votre compte pour réserver l’entretien de votre vélo à
+            domicile, suivre vos interventions et retrouver votre historique.
+          </p>
+          <span className="hero-badge">ENTRETIEN VELO GARANTI</span>
+        </div>
+      </section>
 
-      <form onSubmit={handleSubmit} className="card card__body">
-        {error && <p className="form-error">{error}</p>}
-        {errors.map((e) => <p className="form-error" key={e.field}>{e.field} : {e.message}</p>)}
+      <section className="login-form-section">
+        <div className="login-form-card">
+          <h3>Créer un compte</h3>
+          <p className="subtitle">
+            Quelques informations pour démarrer votre première réservation.
+          </p>
 
-        {[
-          ["email", "Email", "email"], ["mot_passe", "Mot de passe", "password"],
-          ["nom", "Nom", "text"], ["prenom", "Prénom", "text"], ["telephone", "Téléphone", "tel"],
-          ["adresse", "Adresse", "text"], ["code_postal", "Code postal", "text"], ["ville", "Ville", "text"],
-        ].map(([name, label, type]) => (
-          <div className="form-group" key={name}>
-            <label className="form-label" htmlFor={name}>{label}</label>
-            <input id={name} name={name} type={type} className="form-input" value={form[name]} onChange={handleChange} required={name !== "telephone"} />
-          </div>
-        ))}
+          {error && <p className="error-message">{error}</p>}
 
-        <button type="submit" className="btn btn-primary btn-block" disabled={saving}>
-          {saving ? "Création…" : "Créer mon compte"}
-        </button>
-      </form>
+          <form onSubmit={handleSubmit} noValidate>
+            <label>Nom</label>
+            <input
+              type="text"
+              name="nom"
+              placeholder="Votre nom"
+              value={form.nom}
+              onChange={handleChange}
+              required
+            />
+            {fieldErrors.nom && <p className="error-message">{fieldErrors.nom}</p>}
+
+            <label>Prénom</label>
+            <input
+              type="text"
+              name="prenom"
+              placeholder="Votre prénom"
+              value={form.prenom}
+              onChange={handleChange}
+              required
+            />
+            {fieldErrors.prenom && <p className="error-message">{fieldErrors.prenom}</p>}
+
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="nom@exemple.com"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+            {fieldErrors.email && <p className="error-message">{fieldErrors.email}</p>}
+
+            <label>Téléphone</label>
+            <input
+              type="tel"
+              name="telephone"
+              placeholder="06 12 34 56 78"
+              value={form.telephone}
+              onChange={handleChange}
+            />
+
+            <label>Adresse</label>
+            <input
+              type="text"
+              name="adresse"
+              placeholder="12 rue de la République"
+              value={form.adresse}
+              onChange={handleChange}
+              required
+            />
+            {fieldErrors.adresse && <p className="error-message">{fieldErrors.adresse}</p>}
+
+            <label>Code postal</label>
+            <input
+              type="text"
+              name="code_postal"
+              placeholder="69001"
+              value={form.code_postal}
+              onChange={handleChange}
+              required
+            />
+            {fieldErrors.code_postal && (
+              <p className="error-message">{fieldErrors.code_postal}</p>
+            )}
+
+            <label>Ville</label>
+            <input
+              type="text"
+              name="ville"
+              placeholder="Lyon"
+              value={form.ville}
+              onChange={handleChange}
+              required
+            />
+            {fieldErrors.ville && <p className="error-message">{fieldErrors.ville}</p>}
+
+            <label>Mot de passe</label>
+            <input
+              type="password"
+              name="mot_passe"
+              placeholder="••••••••"
+              value={form.mot_passe}
+              onChange={handleChange}
+              required
+            />
+            {fieldErrors.mot_passe && (
+              <p className="error-message">{fieldErrors.mot_passe}</p>
+            )}
+            <p className="form-hint">
+              8 caractères minimum, une majuscule, une minuscule et un chiffre.
+            </p>
+
+            <label>Confirmer le mot de passe</label>
+            <input
+              type="password"
+              name="confirmation"
+              placeholder="••••••••"
+              value={form.confirmation}
+              onChange={handleChange}
+              required
+            />
+
+            <button className="btn-primary" type="submit" disabled={loading}>
+              {loading ? "Création du compte…" : "Créer mon compte"}
+            </button>
+          </form>
+
+          <div className="divider">ou</div>
+          <a href="/login" className="btn-secondary create-account">
+            J’ai déjà un compte
+          </a>
+        </div>
+
+        <footer className="login-footer">
+          <a href="/help">Aide</a>
+          <a href="/legal">Mentions légales</a>
+          <a href="/contact">Contact</a>
+        </footer>
+      </section>
     </main>
-  );
-}
-export default function InscriptionPage() {
-  return (
-    <Suspense fallback={<div className="container" style={{ textAlign: "center", paddingBlock: "var(--space-xl)" }}>Chargement...</div>}>
-      <InscriptionContent />
-    </Suspense>
   );
 }

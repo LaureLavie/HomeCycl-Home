@@ -65,3 +65,31 @@ export const updateUserSchema = z.object({
   ville: z.string().max(255).optional(),
   actif: z.boolean().optional(),
 });
+
+
+// ─────────────────────────────────────────────
+// AUTH-09 : Demande de réinitialisation ("mot de passe oublié")
+// Route publique — un seul champ, volontairement minimal
+// ─────────────────────────────────────────────
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string({ required_error: "L'email est obligatoire" })
+    .email("Format d'email invalide"),
+});
+ 
+// ─────────────────────────────────────────────
+// AUTH-10 : Réinitialisation effective avec le token reçu par lien
+// ─────────────────────────────────────────────
+export const resetPasswordSchema = z.object({
+  token: z
+    .string({ required_error: 'Le token de réinitialisation est obligatoire' })
+    .min(1, 'Token invalide'),
+ 
+  mot_passe: z
+    .string({ required_error: 'Le nouveau mot de passe est obligatoire' })
+    .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      'Le mot de passe doit contenir au moins une minuscule, une majuscule et un chiffre'
+    ),
+});
