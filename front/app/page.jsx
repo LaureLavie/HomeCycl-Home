@@ -5,7 +5,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { CalendarIcon, BikeIcon, CheckCircleIcon, WrenchIcon } from "./components/Icons";
 
-export const Metadata = {
+export const metadata = {
   title: "HomeCycl'Home — Votre vélo entretenu, chez vous",
   description:
     "L'atelier mobile qui redonne vie à votre monture sans que vous ayez à vous déplacer, à Lyon. Expertise artisanale et service premium.",
@@ -92,9 +92,9 @@ export default function HomePage() {
                 montures, de l&apos;urbain au sportif.
               </p>
             </div>
-            <Link href="/forfaits" className="btn btn-outline btn-sm btn-uppercase">
-              Voir la liste
-            </Link>
+            <Link href="/velos-acceptes" className="btn btn-outline btn-sm btn-uppercase">
+                Voir la liste
+              </Link>
           </div>
 
           <div className="bike-grid">

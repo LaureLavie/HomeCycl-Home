@@ -21,12 +21,19 @@ export default function ReservationWizard({ forfaits, produits, velos, zones }) 
     id_zone: null,
     id_forfait: "",
     id_velo: "",
-    produits_selectionnes: [], // [{id_produit, quantite}]
-    creneau: null, // { datetime_debut, id_technicien }
+    produits_selectionnes: [],
+    creneau: null,
     commentaire: "",
   });
 
   const forfaitChoisi = forfaits.find((f) => f.id_forfait === data.id_forfait);
+
+  // Un vélo n'est exigé que si le visiteur en a au moins un enregistré
+  // (compte CLIENT connecté). Un visiteur anonyme ou un client sans vélo
+  // peut réserver sans en sélectionner — cohérent avec le backend, où
+  // id_velo est optionnel (createReservationSchema).
+  const veloRequis = velos.length > 0;
+  const etapeIncomplete = !data.id_forfait || (veloRequis && !data.id_velo);
 
   const handleAddressResolved = ({ adresse, code_postal, ville, id_zone }) => {
     setData((d) => ({
@@ -53,7 +60,8 @@ export default function ReservationWizard({ forfaits, produits, velos, zones }) 
           ville_intervention: data.ville_intervention,
           date_intervention: data.creneau.datetime_debut,
           id_forfait: data.id_forfait,
-          id_velo: data.id_velo,
+          // Jamais de chaîne vide : le backend attend un UUID valide OU l'absence du champ
+          ...(data.id_velo && { id_velo: data.id_velo }),
           id_zone: data.id_zone,
           id_technicien: data.creneau.id_technicien,
           produits: data.produits_selectionnes,
@@ -102,16 +110,22 @@ export default function ReservationWizard({ forfaits, produits, velos, zones }) 
             </select>
           </div>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="velo">Vélo concerné</label>
-            <select id="velo" className="form-input" value={data.id_velo} onChange={(e) => setData({ ...data, id_velo: e.target.value })}>
-              <option value="">— Choisir —</option>
-              {velos.map((v) => (
-                <option key={v.id_velo} value={v.id_velo}>{v.marque} {v.modele}</option>
-              ))}
-            </select>
-            {velos.length === 0 && <p className="text-muted" style={{ fontSize: "var(--fs-100)" }}>Aucun vélo enregistré — ajoutez-en un dans « Mes vélos ».</p>}
-          </div>
+          {veloRequis ? (
+            <div className="form-group">
+              <label className="form-label" htmlFor="velo">Vélo concerné</label>
+              <select id="velo" className="form-input" value={data.id_velo} onChange={(e) => setData({ ...data, id_velo: e.target.value })}>
+                <option value="">— Choisir —</option>
+                {velos.map((v) => (
+                  <option key={v.id_velo} value={v.id_velo}>{v.marque} {v.modele}</option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <p className="text-muted" style={{ fontSize: "var(--fs-100)", marginBottom: "var(--space-md)" }}>
+              Vous n&apos;avez pas encore de vélo enregistré — vous pourrez en ajouter un
+              depuis votre espace client après cette réservation.
+            </p>
+          )}
 
           <fieldset className="form-group">
             <legend className="form-label">Produits additionnels</legend>
@@ -144,7 +158,7 @@ export default function ReservationWizard({ forfaits, produits, velos, zones }) 
 
           <button
             className="btn btn-primary btn-sm"
-            disabled={!data.id_forfait || !data.id_velo}
+            disabled={etapeIncomplete}
             onClick={() => setEtape(2)}
           >
             Continuer

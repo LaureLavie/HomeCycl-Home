@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 
 const NAV = [
   { href: "/client/dashboard", label: "Tableau de bord" },
-  { href: "/client/reservation", label: "Réserver" },
+  { href: "/reservation", label: "Réserver" },
   { href: "/client/historique", label: "Historique" },
   { href: "/client/velos", label: "Mes vélos" },
   { href: "/client/profil", label: "Mon profil" },
