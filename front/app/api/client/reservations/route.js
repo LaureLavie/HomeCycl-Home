@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { apiFetch } from "@/lib/apiFetch";
 
 // Fonctionne connecté (id_client injecté par le back) OU anonyme
-// (le token, s'il existe, est ajouté par apiFetch ; sinon back traite en anonyme)
 export async function POST(request) {
   const body = await request.json();
   try {

@@ -9,7 +9,6 @@ import { clientRouter } from './routes/clientRoute.js';
 import { entrepriseRouter } from './routes/entrepriseRoute.js';
 import { userRouter } from './routes/userRoute.js';
 import { techRouter } from './routes/technicienRoute.js';
-import { creneauxRouter } from './routes/creneauxRoute.js';
 import {
   interventionRouter,
   forfaitRouter,
@@ -57,7 +56,6 @@ app.use('/api/intervention', interventionRouter);
 app.use('/api/forfait', forfaitRouter);
 app.use('/api/produit', produitRouter);
 app.use('/api/zone', zoneRouter);
-app.use('/api/creneaux', creneauxRouter);
 app.use('/api/planning', planningRouter);
 app.use('/api/technicien', techRouter);
 app.use('/api/reservations',reservationRouter);

@@ -9,7 +9,7 @@ export default function CreneauPicker({ id_forfait, id_zone, onSelect }) {
 
   useEffect(() => {
     const dateDebut = new Date().toISOString().split("T")[0];
-    fetch(`/api/creneaux?id_forfait=${id_forfait}&id_zone=${id_zone}&date_debut=${dateDebut}`)
+    fetch(`/api/client/creneaux?id_forfait=${id_forfait}&id_zone=${id_zone}&date_debut=${dateDebut}`)
       .then((res) => res.json())
       .then((result) => {
         if (!result.success) throw new Error(result.message);
@@ -30,11 +30,7 @@ export default function CreneauPicker({ id_forfait, id_zone, onSelect }) {
           <p className="text-muted">{new Date(jour).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p>
           <div className="flex" style={{ flexWrap: "wrap", gap: "var(--space-xs)" }}>
             {listeCreneaux.map((c, i) => (
-              <button
-                key={i}
-                className="btn btn-outline btn-sm"
-                onClick={() => onSelect(c)}
-              >
+              <button key={i} className="btn btn-outline btn-sm" onClick={() => onSelect(c)}>
                 {c.heure_debut} — {c.technicien.prenom} {c.technicien.nom[0]}.
               </button>
             ))}

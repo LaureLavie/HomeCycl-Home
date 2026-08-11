@@ -26,7 +26,7 @@ export async function logoutUser() {
 // US-02 : Inscription (compte CLIENT)
 // ─────────────────────────────────────────────
 export async function signupUser(data) {
-  const res = await fetch("/api/signup", {
+  const res = await fetch("/api/inscription", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
