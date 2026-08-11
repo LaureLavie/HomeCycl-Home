@@ -1,73 +1,59 @@
-// front/app/inscription/page.jsx
-"use client";
+// front/app/api/inscription/finaliser/route.js
+// BFF : relaie la finalisation d'inscription post-réservation vers Express
+// et pose le cookie JWT httpOnly (même pattern que /api/login).
+import { NextResponse } from "next/server";
 
-import { useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 
-export default function InscriptionPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const id_intervention_temp = searchParams.get("id_intervention");
+export async function POST(request) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json(
+      { success: false, message: "Requête invalide" },
+      { status: 400 }
+    );
+  }
 
-  const [form, setForm] = useState({
-    email: "", mot_passe: "", nom: "", prenom: "", telephone: "",
-    adresse: "", code_postal: "", ville: "",
+  let backendRes;
+  try {
+    backendRes = await fetch(`${BACKEND_URL}/api/inscription/finaliser`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    return NextResponse.json(
+      { success: false, message: "Service d'inscription indisponible" },
+      { status: 502 }
+    );
+  }
+
+  const result = await backendRes.json();
+
+  if (!backendRes.ok || !result.success) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: result.message || "Erreur lors de la création du compte",
+        errors: result.errors,
+      },
+      { status: backendRes.status }
+    );
+  }
+
+  const { token, user, redirect } = result.data;
+
+  const response = NextResponse.json({ success: true, data: { user, redirect } });
+
+  response.cookies.set("hch_token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    maxAge: 60 * 60 * 24,
   });
-  const [error, setError] = useState(null);
-  const [errors, setErrors] = useState([]);
-  const [saving, setSaving] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    setError(null);
-    setErrors([]);
-    try {
-      const res = await fetch("/api/inscription/finaliser", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, id_intervention_temp }),
-      });
-      const result = await res.json();
-      if (!res.ok || !result.success) {
-        setErrors(result.errors || []);
-        throw new Error(result.message);
-      }
-      router.push(result.data.redirect || "/client/dashboard");
-      router.refresh();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <main className="container" style={{ maxWidth: "32rem", paddingBlock: "var(--space-xl)" }}>
-      <h1>Créez votre compte</h1>
-      <p className="text-muted">Votre réservation a été enregistrée. Finalisez la création de votre compte pour la confirmer.</p>
-
-      <form onSubmit={handleSubmit} className="card card__body">
-        {error && <p className="form-error">{error}</p>}
-        {errors.map((e) => <p className="form-error" key={e.field}>{e.field} : {e.message}</p>)}
-
-        {[
-          ["email", "Email", "email"], ["mot_passe", "Mot de passe", "password"],
-          ["nom", "Nom", "text"], ["prenom", "Prénom", "text"], ["telephone", "Téléphone", "tel"],
-          ["adresse", "Adresse", "text"], ["code_postal", "Code postal", "text"], ["ville", "Ville", "text"],
-        ].map(([name, label, type]) => (
-          <div className="form-group" key={name}>
-            <label className="form-label" htmlFor={name}>{label}</label>
-            <input id={name} name={name} type={type} className="form-input" value={form[name]} onChange={handleChange} required={name !== "telephone"} />
-          </div>
-        ))}
-
-        <button type="submit" className="btn btn-primary btn-block" disabled={saving}>
-          {saving ? "Création…" : "Créer mon compte"}
-        </button>
-      </form>
-    </main>
-  );
+  return response;
 }
