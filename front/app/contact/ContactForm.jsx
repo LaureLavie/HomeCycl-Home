@@ -7,7 +7,6 @@ import { envoyerMessageContact } from "@/services/contactService";
 const SUJETS = [
   "Question générale",
   "Devis pour réparation",
-  "Entretien complet E-Bike",
   "Problème avec une intervention",
   "Autre",
 ];
