@@ -2,13 +2,16 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
+import { useJsApiLoader, Autocomplete, GoogleMap, Marker, Circle } from "@react-google-maps/api";
+import { InfoIcon } from "../../components/Icons";
 
 const LIBRARIES = ["places", "geometry"];
+const LYON_CENTER = { lat: 45.764, lng: 4.8357 };
+const MAP_CONTAINER_STYLE = { width: "100%", height: "100%" };
 
 // ─────────────────────────────────────────────
 // Détermine dans quelle zone se trouve un point (point-in-polygon)
-// Réutilise la lib "geometry" de Google Maps, déjà chargée pour Zones/Leaflet→GoogleMaps
+// Réutilise la lib "geometry" de Google Maps (même logique que GoogleZoneMap admin)
 // ─────────────────────────────────────────────
 const trouverZone = (latLng, zones) => {
   for (const zone of zones) {
@@ -24,15 +27,21 @@ const trouverZone = (latLng, zones) => {
   return null;
 };
 
+// RESA-01 : Étape 1 — Adresse d'intervention (US-21)
+// Compétence CDA : Développer des composants métier — Interfaces utilisateur (géolocalisation)
 export default function AddressPicker({ zones, onResolved }) {
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-zones", // même id que GoogleZoneMap : évite un double chargement du script
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: "google-map-zones", // même id que GoogleZoneMap admin : évite un double chargement du script
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: LIBRARIES,
   });
 
   const autocompleteRef = useRef(null);
   const [error, setError] = useState(null);
+  const [resolved, setResolved] = useState(null); // { adresse, code_postal, ville, id_zone, lat, lng }
+  const [complement, setComplement] = useState("");
+  const [codeAcces, setCodeAcces] = useState("");
+  const [center, setCenter] = useState(LYON_CENTER);
 
   const onLoad = useCallback((autocomplete) => {
     autocompleteRef.current = autocomplete;
@@ -57,38 +66,142 @@ export default function AddressPicker({ zones, onResolved }) {
     const code_postal = getComponent("postal_code");
     const ville = getComponent("locality");
 
-    setError(null);
-    onResolved({
+    setError(zone ? null : "Cette adresse ne se situe dans aucune de nos zones d'intervention.");
+    setCenter({ lat: latLng.lat(), lng: latLng.lng() });
+    setResolved({
       adresse: `${numero} ${rue}`.trim(),
       code_postal,
       ville,
       id_zone: zone?.id_zone || null,
+      lat: latLng.lat(),
+      lng: latLng.lng(),
     });
   };
 
-  if (!isLoaded) return <p className="text-muted">Chargement…</p>;
+  const handleContinuer = () => {
+    if (!resolved) {
+      setError("Renseignez d'abord votre adresse d'intervention.");
+      return;
+    }
+    if (!resolved.id_zone) {
+      setError("Cette adresse ne se situe dans aucune de nos zones d'intervention.");
+      return;
+    }
+    onResolved({ ...resolved, complement, code_acces: codeAcces });
+  };
+
+  if (loadError) {
+    return <p className="form-error">Erreur de chargement de Google Maps. Vérifiez la clé API (NEXT_PUBLIC_GOOGLE_MAPS_API_KEY).</p>;
+  }
 
   return (
-    <div className="card card__body" style={{ maxWidth: "28rem" }}>
-      <div className="form-group">
-        <label className="form-label" htmlFor="address-autocomplete">Adresse d&apos;intervention</label>
-        <Autocomplete
-          onLoad={onLoad}
-          onPlaceChanged={handlePlaceChanged}
-          options={{ componentRestrictions: { country: "fr" }, fields: ["address_components", "geometry"] }}
+    <div className="reservation-step-grid">
+      {/* ---------- Colonne formulaire ---------- */}
+      <div>
+        <h2 style={{ color: "var(--color-secondary-accent-dark)" }}>Où devons-nous intervenir&nbsp;?</h2>
+        <p className="text-muted" style={{ marginBottom: "var(--space-lg)" }}>
+          Indiquez l&apos;adresse de prise en charge à Lyon et ses environs. Nous
+          nous déplaçons directement chez vous ou sur votre lieu de travail.
+        </p>
+
+        {!isLoaded ? (
+          <p className="text-muted">Chargement de l&apos;autocomplétion d&apos;adresse…</p>
+        ) : (
+          <div className="form-group">
+            <label className="form-label" htmlFor="address-autocomplete">Adresse complète</label>
+            <Autocomplete
+              onLoad={onLoad}
+              onPlaceChanged={handlePlaceChanged}
+              options={{ componentRestrictions: { country: "fr" }, fields: ["address_components", "geometry"] }}
+            >
+              <input
+                id="address-autocomplete"
+                type="text"
+                className="form-input"
+                placeholder="Ex : 12 Rue de la République, 69002 Lyon"
+              />
+            </Autocomplete>
+          </div>
+        )}
+
+        <div className="grid" style={{ gridTemplateColumns: "1fr 1fr" }}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="complement">Complément (Appt, étage…)</label>
+            <input
+              id="complement"
+              className="form-input"
+              value={complement}
+              onChange={(e) => setComplement(e.target.value)}
+              placeholder="Appartement 4B"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="code-acces">Code d&apos;accès / Interphone</label>
+            <input
+              id="code-acces"
+              className="form-input"
+              value={codeAcces}
+              onChange={(e) => setCodeAcces(e.target.value)}
+              placeholder="B123"
+            />
+          </div>
+        </div>
+
+        {error && <p className="form-error">{error}</p>}
+
+        <div className="info-note">
+          <InfoIcon />
+          <p>
+            <strong>Note :</strong> Nous intervenons uniquement dans le Grand Lyon.
+            Si vous êtes hors zone, des frais de déplacement peuvent s&apos;appliquer.
+          </p>
+        </div>
+
+        <button
+          className="btn btn-primary"
+          onClick={handleContinuer}
+          disabled={!resolved || !resolved.id_zone}
+          style={{ marginTop: "var(--space-md)" }}
         >
-          <input
-            id="address-autocomplete"
-            type="text"
-            className="form-input"
-            placeholder="Tapez votre adresse…"
-          />
-        </Autocomplete>
+          Suivant : Choisir mon forfait →
+        </button>
       </div>
-      {error && <p className="form-error">{error}</p>}
-      <p className="text-muted" style={{ fontSize: "var(--fs-100)" }}>
-        Nous intervenons uniquement dans nos zones couvertes à Lyon et alentours.
-      </p>
+
+      {/* ---------- Colonne carte ---------- */}
+      <div className="reservation-map-card">
+        {isLoaded ? (
+          <GoogleMap
+            mapContainerStyle={MAP_CONTAINER_STYLE}
+            center={center}
+            zoom={resolved ? 14 : 12}
+            options={{ disableDefaultUI: true, zoomControl: true }}
+          >
+            <Circle
+              center={center}
+              radius={2200}
+              options={{
+                strokeColor: "#3fc046",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#56df5c",
+                fillOpacity: 0.15,
+              }}
+            />
+            <Marker position={center} />
+          </GoogleMap>
+        ) : (
+          <div className="flex-center" style={{ height: "100%", background: "var(--color-secondary-bg)" }}>
+            <p className="text-muted">Chargement de la carte…</p>
+          </div>
+        )}
+        <span className="reservation-map-card__badge">
+          {resolved
+            ? resolved.id_zone
+              ? "Zone de couverture active"
+              : "Hors zone de couverture"
+            : "Zone de couverture"}
+        </span>
+      </div>
     </div>
   );
 }

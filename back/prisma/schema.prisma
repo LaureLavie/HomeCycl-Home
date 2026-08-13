@@ -245,3 +245,15 @@ model Inclure {
   @@id([id_intervention, id_produit])
   @@map("inclure")
 }
+
+model MessageContact {
+  id_message    String   @id @default(uuid())
+  nom           String   @db.VarChar(100)
+  email         String   @db.VarChar(200)
+  sujet         String   @db.VarChar(150)
+  message       String   @db.Text
+  traite        Boolean  @default(false)
+  date_creation DateTime @default(now())
+ 
+  @@map("message_contact")
+}

@@ -1,7 +1,16 @@
 "use client";
 // Icônes SVG inline — évite d'ajouter une dépendance (lucide-react, etc.)
 // pour un besoin aussi restreint. `currentColor` hérite la couleur CSS du
-// parent (ex: .form-input-icon { color: var(--color-neutral); }).
+// parent (ex: .form-input-icon { color: var(--color-neutral); })
+
+export function PinIcon({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 21.5S5 14.9 5 9.8a7 7 0 0 1 14 0c0 5.1-7 11.7-7 11.7Z" />
+      <circle cx="12" cy="9.5" r="2.4" />
+    </svg>
+  );
+}
 
 export function MailIcon({ size = 18 } ) {
   return (
@@ -203,3 +212,65 @@ export function ShareIcon({ size = 18 }) {
     </svg>
   );
 }
+
+// Icônes complémentaires pour la page /forfaits — même logique que Icons.jsx
+// (SVG inline, currentColor, pas de dépendance externe). À terme, tu peux
+// fusionner ce fichier dans components/Icons.jsx si tu préfères un seul point d'entrée.
+
+  export function ZapIcon({ size = 20 }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />
+      </svg>
+    );
+  }
+
+  export function BatteryIcon({ size = 26 }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+        <rect x="7" y="2.5" width="10" height="19" rx="2.2" />
+        <path d="M10 6.5h4" />
+        <path d="M13 11 9.5 15h3l-1 4 4-5.5h-3l1-2.5Z" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  }
+
+  export function BriefcaseIcon({ size = 22 }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="8" width="18" height="12" rx="2" />
+        <path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+        <path d="M3 13h18" />
+      </svg>
+    );
+  }
+
+  export function TimerIcon({ size = 22 }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="13.5" r="8" />
+        <path d="M12 9.5V14l3 2" />
+        <path d="M9.5 2h5" />
+        <path d="m18.5 5-1.2-1.2" />
+      </svg>
+    );
+  }
+
+  export function HeartCheckIcon({ size = 22 }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12.5 20.2 5.4 13a4.6 4.6 0 0 1 6.5-6.5l.6.6.6-.6a4.6 4.6 0 0 1 6.5 6.5l-1.4 1.4" />
+        <path d="m10.5 15.5 2 2 4-4" />
+      </svg>
+    );
+  }
+
+  export function InfoIcon({ size = 18 }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v5.5" />
+        <circle cx="12" cy="8" r="0.9" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  }

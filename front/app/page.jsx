@@ -38,7 +38,7 @@ export default function HomePage() {
         {/* ---------- HERO ---------- */}
         <section
           className="hero"
-          style={{ backgroundImage: "url(/images/hero-home.webp)" }}
+          style={{ backgroundImage: "url(/images/hero-home.webp)", backgroundSize: "cover", backgroundPosition: "center" }}
         >
           <div className="container hero__content">
             <h1 className="hero__title">

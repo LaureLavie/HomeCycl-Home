@@ -3,7 +3,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
-import { publicRouter } from './routes/publicRoute.js'
+import { publicRouter } from './routes/publicRoute.js';
 import authRouter from './routes/authRoute.js';
 import { clientRouter } from './routes/clientRoute.js';
 import { entrepriseRouter } from './routes/entrepriseRoute.js';
@@ -23,6 +23,7 @@ import {
   veloRouter,
   historiqueRouter,
 } from './routes/reservationRoute.js';
+import { contactRouter } from './routes/contactRoute.js';
 
 
 
@@ -51,6 +52,7 @@ app.use('/api/inscription', inscriptionRouter);
 app.use('/api/public', publicRouter);
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/contact', contactRouter);
 app.use('/api/entreprise', entrepriseRouter);
 app.use('/api/intervention', interventionRouter);
 app.use('/api/forfait', forfaitRouter);
@@ -63,6 +65,7 @@ app.use('/api/client', clientRouter);
 app.use('/api/client/profil',   profilRouter);
 app.use('/api/client/velos',       veloRouter);
 app.use('/api/client/historique',  historiqueRouter);
+
 
 // Chemin pour servir les fichiers statiques (ex : images uploadées)
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));

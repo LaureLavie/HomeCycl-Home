@@ -2,6 +2,31 @@
 // Compétence CDA : Développer des composants métier + Sécurité (validation entrées)
 import { z } from 'zod';
 
+// CONTACT-01 : Validation du formulaire de contact public
+// Compétence CDA : Développer des composants métier + Sécurité (validation entrées)
+
+export const createContactSchema = z.object({
+  nom: z
+    .string({ required_error: 'Le nom est obligatoire' })
+    .min(1, 'Le nom est obligatoire')
+    .max(100, 'Le nom ne doit pas dépasser 100 caractères'),
+
+  email: z
+    .string({ required_error: "L'email est obligatoire" })
+    .email("Format d'email invalide")
+    .max(200),
+
+  sujet: z
+    .string({ required_error: 'Le sujet est obligatoire' })
+    .min(1, 'Merci de préciser le sujet de votre demande')
+    .max(150),
+
+  message: z
+    .string({ required_error: 'Le message est obligatoire' })
+    .min(10, 'Merci de détailler un minimum votre demande (10 caractères minimum)')
+    .max(2000, 'Le message ne doit pas dépasser 2000 caractères'),
+});
+
 // ─────────────────────────────────────────────
 // US-04 : Entreprise
 // ─────────────────────────────────────────────

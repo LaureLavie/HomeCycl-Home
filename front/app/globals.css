@@ -378,7 +378,7 @@
        position: relative;
        min-height: 32rem;
        display: flex;
-       align-items: flex-end;
+       align-items: flex-start;
        color: var(--color-text-inverse);
        background-color: var(--color-secondary-accent-dark);
        background-size: cover;
@@ -622,6 +622,189 @@
        .footer-grid { grid-template-columns: repeat(3, 1fr); }
      }
    }
+
+   /* ---------- Structure générale du tunnel ---------- */
+  .reservation-shell {
+    background-color: var(--color-secondary-bg);
+    min-height: 100vh;
+  }
+ 
+  .reservation-content {
+    padding: var(--space-lg);
+    max-width: 76rem;
+    margin-inline: auto;
+  }
+ 
+  /* ---------- Bandeau ---------- */
+  .reservation-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid rgba(44, 44, 44, 0.08);
+  }
+  .reservation-topbar .logo {
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: var(--fs-400);
+    color: var(--color-primary-accent-dark);
+  }
+  .reservation-quit {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--color-secondary-accent);
+    font-weight: 600;
+    font-size: var(--fs-200);
+  }
+  .reservation-quit:hover { color: var(--color-danger); }
+ 
+  /* ---------- Jauge d'étapes ---------- */
+  .reservation-steps {
+    display: flex;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+    max-width: 76rem;
+    margin-inline: auto;
+  }
+  .reservation-steps__col { flex: 1; display: flex; flex-direction: column; gap: var(--space-xs); }
+  .reservation-steps__label {
+    font-size: var(--fs-100);
+    font-weight: 700;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .reservation-steps__label.is-active { color: var(--color-secondary-accent-dark); }
+  .reservation-steps__bar {
+    height: 4px;
+    border-radius: var(--radius-pill);
+    background: rgba(44, 44, 44, 0.12);
+    transition: background-color var(--transition-medium);
+  }
+  .reservation-steps__bar.is-filled { background: var(--color-primary-accent-dark); }
+ 
+  /* ---------- Grille 2 colonnes (formulaire / aside carte ou récap) ---------- */
+  .reservation-step-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .reservation-step-grid { grid-template-columns: 1fr; }
+  }
+ 
+  /* ---------- Carte de zone (Google Map) ---------- */
+  .reservation-map-card {
+    position: relative;
+    height: 26rem;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-medium);
+  }
+  .reservation-map-card__badge {
+    position: absolute;
+    left: 50%;
+    bottom: var(--space-md);
+    transform: translateX(-50%);
+    background: var(--color-secondary-accent-dark);
+    color: var(--color-text-inverse);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-100);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+ 
+  /* ---------- Encart d'information (note zone, paiement) ---------- */
+  .info-note {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: flex-start;
+    background: rgba(86, 223, 92, 0.12);
+    border: 1px solid rgba(86, 223, 92, 0.35);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-block: var(--space-md);
+    color: var(--color-secondary-accent-dark);
+    font-size: var(--fs-200);
+  }
+  .info-note svg { flex-shrink: 0; margin-top: 2px; }
+
+  @media (max-width: 900px) {
+    .contact-grid { grid-template-columns: 1fr !important; }
+  }
+ 
+  /* ---------- Encart "Infos Pratiques" ---------- */
+  .contact-sidebar {
+    background: var(--color-secondary-accent);
+    color: var(--color-text-inverse);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+  }
+  .contact-sidebar__divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin-block: var(--space-md);
+  }
+  .contact-sidebar__row {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: flex-start;
+    padding-block: var(--space-sm);
+  }
+  .contact-sidebar__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--color-primary-accent);
+  }
+  .contact-sidebar__title {
+    font-family: var(--font-title);
+    font-weight: 700;
+    color: var(--color-text-inverse);
+    margin-bottom: 2px;
+  }
+  .contact-sidebar__text {
+    font-size: var(--fs-200);
+    color: rgba(255, 255, 255, 0.8);
+  }
+ 
+  /* ---------- Carte de zone (image statique) ---------- */
+  .contact-map {
+    position: relative;
+    height: 18rem;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+  }
+  .contact-map img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .contact-map__badge {
+    position: absolute;
+    left: var(--space-md);
+    bottom: var(--space-md);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    background: var(--color-bg-elevated);
+    color: var(--color-secondary-accent-dark);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-100);
+    font-weight: 700;
+    box-shadow: var(--shadow-soft);
+  }
    
    /* ============================================================================
       6. UTILITAIRES

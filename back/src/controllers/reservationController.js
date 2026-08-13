@@ -47,7 +47,7 @@ export const creerReservation = async (req, res) => {
     };
 
     if (!id_client) {
-      response.redirect = `/inscription?id_intervention=${reservation.id_intervention}`;
+      response.redirect = `/inscription/finaliser?id_intervention=${reservation.id_intervention}`;
       response.message = 'Réservation enregistrée. Créez votre compte pour la confirmer.';
       response.requiresAccount = true;
     }
