@@ -1,18 +1,58 @@
-import { Kodchasan, Syne } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-// Titres, logo, CTA — chargé en 500/600/700 (charte : "Kodchasan Bold")
-const kodchasan = Kodchasan({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
+// Configuration locale pour Kodchasan
+const kodchasan = localFont({
+  src: [
+    {
+      path: "../public/fonts/kodchasan-v20-latin-500.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/kodchasan-v20-latin-600.woff2",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/kodchasan-v20-latin-700.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-title",
   display: "swap",
 });
 
-// Corps de texte, menus
-const syne = Syne({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+// Configuration locale pour Syne
+const syne = localFont({
+  src: [
+    {
+      path: "../public/fonts/syne-v24-latin-regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/syne-v24-latin-500.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/syne-v24-latin-600.woff2",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/syne-v24-latin-700.woff2",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/syne-v24-latin-800.woff2",
+      weight: "800",
+      style: "normal",
+    },
+  ],
   variable: "--font-body",
   display: "swap",
 });
