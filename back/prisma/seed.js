@@ -87,6 +87,107 @@ async function main() {
     },
   });
 
+  // 1. ENTREPRISE
+  const entreprise = await prisma.entreprise.create({
+    data: {
+      nom: "Home Cycl'Home Lyon",
+      siret: "12345678901234",
+      adresse: "10 Rue de la République",
+      code_postal: "69002",
+      ville: "Lyon"
+    }
+  });
+
+  // 2. ADMIN
+  await prisma.authentification.create({
+    data: {
+      email: 'admin@hch.com',
+      mot_passe_hash: hashedPassword,
+      Role: Role.ADMIN,
+      administrateur: { create: { nom: 'Super Admin' } }
+    }
+  });
+
+  // 3. ZONES LYON (Pour répondre à votre besoin spécifique)
+  const zones = [
+    { nom: 'Lyon Centre', frais_deplacement: 5.00 },
+    { nom: 'Lyon 7ème', frais_deplacement: 8.00 },
+    { nom: 'Villeurbanne', frais_deplacement: 10.00 }
+  ];
+
+  for (const z of zones) {
+    await prisma.zone.create({ data: z });
+  }
+
+  // 4. FORFAITS & PRODUITS
+  const forfait = await prisma.forfait.create({
+    data: { nom: 'Révision Complète', prix: 49.90, duree_minutes: 60, type_velo: 'Tous' }
+  });
+
+  const produit = await prisma.produit.create({
+    data: { nom: 'Chambre à air', prix: 8.50 }
+  });
+
+  // 5. BOUCLE POUR PLUSIEURS CLIENTS ET VELOS
+  for (let i = 1; i <= 3; i++) {
+    const clientAuth = await prisma.authentification.create({
+      data: {
+        email: `client${i}@test.com`,
+        mot_passe_hash: hashedPassword,
+        Role: Role.CLIENT,
+        client: {
+          create: {
+            nom: `Client${i}`,
+            prenom: 'Test',
+            adresse: `${i} rue de Lyon`,
+            code_postal: '69001',
+            ville: 'Lyon',
+            velos: {
+              create: {
+                marque: 'Giant',
+                modele: 'Escape',
+                annee: 2022,
+                type_velo: 'VTC'
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // 6. TECHNICIEN
+  const technicienAuth = await prisma.authentification.create({
+    data: {
+      email: 'tech@hch.com',
+      mot_passe_hash: hashedPassword,
+      Role: Role.TECHNICIEN,
+      technicien: {
+        create: { nom: 'Martin', prenom: 'Julien', telephone: '0600000000' }
+      }
+    }
+  });
+
+  const technicien = await prisma.technicien.findFirst(); // ou stockez la variable lors de la création
+  const forfaitInter = await prisma.forfait.findFirst();
+const zone = await prisma.zone.findFirst();
+const client = await prisma.client.findFirst();
+
+// Création d'une intervention
+await prisma.intervention.create({
+  data: {
+    date_intervention: new Date(),
+    statut: 'PLANIFIEE',
+    adresse_intervention: '10 rue de la République, Lyon',
+    montant: 49.90,
+    id_technicien: technicien?.id_technicien,
+    id_client: client?.id_client,
+    id_forfait: forfaitInter?.id_forfait,
+    id_zone: zone?.id_zone,
+    // Note : id_velo est optionnel, mais vous pouvez le récupérer aussi
+  }
+});
+
   console.log("✅ Données fictives insérées avec succès !");
 }
 
