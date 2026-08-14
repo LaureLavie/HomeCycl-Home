@@ -102,8 +102,8 @@ export default function LoginPage() {
 
         {/* Footer */}
         <footer className="login-footer" style={{ display: "flex", gap: "2rem", marginTop: "2rem" }}>
-          <a href="/help">Aide</a>
-          <a href="/legal">Mentions légales</a>
+          <a href="/cgv">Conditions Générales de Vente</a>
+          <a href="/mentions-legales">Mentions légales</a>
           <a href="/contact">Contact</a>
         </footer>
       </section>

@@ -22,7 +22,7 @@ export async function POST(request) {
 
   let backendRes;
   try {
-    backendRes = await fetch(`${BACKEND_URL}/api/inscription`, {
+    backendRes = await fetch(`${BACKEND_URL}/api/auth/inscription`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signupUser } from "@/services/authService";
+import { signupUser } from "../../services/authService";
 
 // US-02 : Inscription (compte CLIENT uniquement — ADMIN/TECHNICIEN créés par l'admin)
 // Compétence CDA : Développer des composants métier — Interfaces utilisateur
