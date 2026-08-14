@@ -1,6 +1,7 @@
 // back/tests/unit/auth.utils.test.js
 import * as dotenv from 'dotenv';
 dotenv.config({ path: new URL('../../.env.test', import.meta.url).pathname });
+import '../env.cjs';
 
 import jwt from 'jsonwebtoken';
 import {

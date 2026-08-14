@@ -16,18 +16,23 @@ let idForfaitCree;
 const emailAdmin = `jest-admin-${Date.now()}@homecyclhome.fr`;
 
 beforeAll(async () => {
-  // Nettoyer la table avant le test
-  await prisma.authentification.deleteMany({});
+// 1. Supprimez les tables enfants en premier
+await prisma.administrateur.deleteMany({});
+await prisma.client.deleteMany({});
+await prisma.technicien.deleteMany({});
 
-  // Créer l'admin manuellement via Prisma
-  await prisma.authentification.create({
-    data: {
-      email: 'admin@test.com',
-      mot_passe_hash: await bcrypt.hash('AdminTest1', 10),
-      Role: 'ADMIN',
-      administrateur: { create: { nom: 'Admin Test' } }
-    }
-  });
+// 2. Maintenant, vous pouvez supprimer la table parente
+await prisma.authentification.deleteMany({});
+
+// 3. Créer l'admin
+await prisma.authentification.create({
+  data: {
+    email: 'admin@test.com',
+    mot_passe_hash: await bcrypt.hash('AdminTest1', 10),
+    Role: 'ADMIN',
+    administrateur: { create: { nom: 'Admin Test' } }
+  }
+});
 
 
   const login = await request(app)

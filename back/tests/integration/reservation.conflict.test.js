@@ -1,7 +1,7 @@
 // back/tests/integration/reservation.conflict.test.js
 import '../env.cjs';
 import request from 'supertest';
-import { app } from '../../src/index.js';
+import app from '../../src/index.js';
 // ... setup similaire (client + forfait + technicien + zone existants)
 
 describe('E4-TI02 — Conflit de créneau', () => {
