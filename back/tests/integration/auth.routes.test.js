@@ -1,5 +1,5 @@
 // back/tests/integration/auth.routes.test.js
-import '../setup/env.cjs'; // charge .env.test avant tout import
+import '../env.cjs'; // charge .env.test avant tout import
 import express from 'express';
 import request from 'supertest';
 import authRouter from '../../src/routes/authRoute.js';

@@ -1,4 +1,7 @@
 // back/tests/unit/auth.utils.test.js
+import 'dotenv/config';
+dotenv.config({ path: new URL('../../.env.test', import.meta.url).pathname });
+
 import jwt from 'jsonwebtoken';
 import {
   hashPassword,

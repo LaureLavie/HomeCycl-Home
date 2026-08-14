@@ -1,5 +1,5 @@
 // back/tests/integration/forfait.routes.test.js
-import '../setup/env.cjs';
+import '../env.cjs';
 import express from 'express';
 import request from 'supertest';
 import { forfaitRouter } from '../../src/routes/interventionRoute.js';
@@ -16,6 +16,16 @@ let idForfaitCree;
 const emailAdmin = `jest-admin-${Date.now()}@homecyclhome.fr`;
 
 beforeAll(async () => {
+  const login = await request(app)
+  .post('/api/auth/login')
+  .send({ email: emailAdmin, mot_passe: 'AdminTest1' });
+
+// Diagnostic : afficher la réponse si le login échoue
+if (login.status !== 200) {
+  console.error('Login admin échoué :', login.status, login.body);
+}
+expect(login.status).toBe(200);
+tokenAdmin = login.body.data.token;
   // Jeu d'essai : un compte admin pour le test
   await request(app).post('/api/auth/inscription').send({
     email: emailAdmin,
@@ -23,10 +33,6 @@ beforeAll(async () => {
     role: 'ADMIN',
     nom: 'AdminJest',
   });
-  const login = await request(app)
-    .post('/api/auth/login')
-    .send({ email: emailAdmin, mot_passe: 'AdminTest1' });
-  tokenAdmin = login.body.data.token;
 });
 
 afterAll(async () => {
