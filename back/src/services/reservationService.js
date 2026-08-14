@@ -30,6 +30,21 @@ export const createReservation = async (data, id_client = null) => {
     commentaire,
   } = data;
 
+  if (id_technicien) {
+    const conflit = await prisma.intervention.findFirst({
+      where: {
+        id_technicien,
+        date_intervention: new Date(date_intervention),
+        statut: { notIn: ['ANNULEE'] },
+      },
+    });
+    if (conflit) {
+      const error = new Error('Ce créneau n\'est plus disponible');
+      error.statusCode = 409;
+      throw error;
+    }
+  }
+
   // 1. Récupère le forfait pour calculer le montant et valider la durée
   const forfait = await prisma.forfait.findUnique({
     where: { id_forfait },

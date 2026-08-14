@@ -21,7 +21,7 @@ import { prisma } from '../lib/prisma.js';
 // Utilitaire : ajoute N minutes à une heure HH:MM
 // ─────────────────────────────────────────────
 
-const addMinutes = (heureMinutes, minutes) => {
+export const addMinutes = (heureMinutes, minutes) => {
   return heureMinutes + minutes;
 };
 
@@ -29,7 +29,7 @@ const addMinutes = (heureMinutes, minutes) => {
 // Utilitaire : convertit une date DateTime en minutes depuis minuit
 // ─────────────────────────────────────────────
 
-const dateToMinutes = (dt) => {
+export const dateToMinutes = (dt) => {
   const d = new Date(dt);
   return d.getHours() * 60 + d.getMinutes();
 };
@@ -38,7 +38,7 @@ const dateToMinutes = (dt) => {
 // Utilitaire : construit un DateTime pour un jour J à HH:MM
 // ─────────────────────────────────────────────
 
-const buildDatetime = (dateStr, minutesDepuisMinuit) => {
+export const buildDatetime = (dateStr, minutesDepuisMinuit) => {
   const [year, month, day] = dateStr.split('-').map(Number);
   const h = Math.floor(minutesDepuisMinuit / 60);
   const m = minutesDepuisMinuit % 60;
@@ -51,7 +51,7 @@ const buildDatetime = (dateStr, minutesDepuisMinuit) => {
 // si debutCreneau < finOccupe ET finCreneau > debutOccupe
 // ─────────────────────────────────────────────
 
-const chevauche = (debutCreneau, finCreneau, debutOccupe, finOccupe) => {
+export const chevauche = (debutCreneau, finCreneau, debutOccupe, finOccupe) => {
   return debutCreneau < finOccupe && finCreneau > debutOccupe;
 };
 

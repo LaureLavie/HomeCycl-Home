@@ -45,9 +45,9 @@ Projet réalisé dans le cadre de la formation "Concepteur Développeur d'Applic
 - Pipeline CI/CD et documentation de déploiement
 
 ## Architecture technique
-- Backend : Node.js + Express (REST API)
+- Backend : Node.js 
 - Base de données : PostgreSQL (relationnelle)
-- ORM/accès données : Neon
+- ORM/accès données : Prisma/ Neon
 - Stockage fichiers : Neon
 - Authentification : JWT + roles
 - Frontend :Nextjs
@@ -104,14 +104,11 @@ Projet réalisé dans le cadre de la formation "Concepteur Développeur d'Applic
 ## Déploiement
 - Conteneuriser services (Docker)
 - Déployer sur VPS
-- Mettre en place sauvegardes DB et monitoring
 - Pipeline CI/CD pour automatiser builds, tests et déploiement
 
 ## Documentation
-- Cahier des charges
-- Diagrammes (architecture)
-- Guides d'installation et d'exploitation
-- Manuel utilisateur pour administrateurs/techniciens/clients
+- Guides d'utilisation
+- Documentation API
 
 ## Licence
 LICENSE MIT.
