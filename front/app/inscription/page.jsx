@@ -60,9 +60,11 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="login-page">
-      <section className="login-hero">
-        <div className="login-hero-content">
+    <main className="login-page" style={{ display: "flex", minHeight: "100vh", width: "100%" }}>
+      
+    {/* Section Hero (Gauche) */}
+    <section className="login-hero" style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "4rem" }}>
+      <div className="login-hero-content" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <h1>HomeCycl’Home</h1>
           <h2>Rejoignez le garage virtuel lyonnais.</h2>
           <p>
@@ -73,19 +75,24 @@ export default function SignupPage() {
         </div>
       </section>
 
-      <section className="login-form-section">
-        <div className="login-form-card">
-          <h3>Créer un compte</h3>
-          <p className="subtitle">
-            Quelques informations pour démarrer votre première réservation.
-          </p>
-
-          {error && <p className="error-message">{error}</p>}
-
-          <form onSubmit={handleSubmit} noValidate>
-            <label>Nom</label>
-            <input
-              type="text"
+      <section className="login-form-section" style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", padding: "2rem" }}>
+        
+        {/* Carte principale */}
+        <div className="login-form-card" style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%", maxWidth: "420px", padding: "2.5rem", boxSizing: "border-box" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <h3>Créer un compte</h3>
+            <p className="subtitle">
+              Quelques informations pour démarrer votre première réservation.
+            </p>
+</div>
+            {error && <p className="error-message">{error}</p>}
+ {/* Formulaire en colonne avec de grands espaces */}
+ <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              <label>Nom</label>
+              <input
+                type="text"
               name="nom"
               placeholder="Votre nom"
               value={form.nom}
@@ -185,6 +192,7 @@ export default function SignupPage() {
               onChange={handleChange}
               required
             />
+            </div>
 
             <button className="btn-primary" type="submit" disabled={loading}>
               {loading ? "Création du compte…" : "Créer mon compte"}
@@ -198,8 +206,8 @@ export default function SignupPage() {
         </div>
 
         <footer className="login-footer">
-          <a href="/help">Aide</a>
-          <a href="/legal">Mentions légales</a>
+          <a href="/cgv">Conditions Générales de Vente</a>
+          <a href="/mentions-legales">Mentions légales</a>
           <a href="/contact">Contact</a>
         </footer>
       </section>
