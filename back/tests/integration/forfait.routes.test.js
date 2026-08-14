@@ -16,6 +16,20 @@ let idForfaitCree;
 const emailAdmin = `jest-admin-${Date.now()}@homecyclhome.fr`;
 
 beforeAll(async () => {
+  // Nettoyer la table avant le test
+  await prisma.authentification.deleteMany({});
+
+  // Créer l'admin manuellement via Prisma
+  await prisma.authentification.create({
+    data: {
+      email: 'admin@test.com',
+      mot_passe_hash: await bcrypt.hash('AdminTest1', 10),
+      Role: 'ADMIN',
+      administrateur: { create: { nom: 'Admin Test' } }
+    }
+  });
+
+
   const login = await request(app)
   .post('/api/auth/login')
   .send({ email: emailAdmin, mot_passe: 'AdminTest1' });
