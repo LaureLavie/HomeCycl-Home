@@ -151,25 +151,15 @@ export const createReservation = async (data, id_client = null) => {
   });
 };
 
-    
-
 // ─────────────────────────────────────────────
 // US-22 : Annuler une réservation (côté client)
 // ─────────────────────────────────────────────
 
 export const annulerReservationClient = async (id_intervention, id_client, motif) => {
-  // Vérifie que la réservation appartient au client
-  const result = await prisma.intervention.update({
+  const intervention = await prisma.intervention.findUnique({
     where: { id_intervention },
-    data: { statut: 'ANNULEE', commentaire: commentaireAnnulation },
-    select: { id_intervention: true, statut: true, date_intervention: true, commentaire: true },
+    select: { id_client: true, statut: true },
   });
-
-  // ── Supprime l'événement Cronofy (non bloquant) ──────────
-  setImmediate(() => supprimerEvenementIntervention(id_intervention));
-
-  return result;
-};
 
   if (!intervention) {
     const error = new Error('Réservation introuvable');
@@ -201,7 +191,7 @@ export const annulerReservationClient = async (id_intervention, id_client, motif
     ? `[ANNULÉE PAR CLIENT] ${motif}`
     : '[ANNULÉE PAR CLIENT]';
 
-  return await prisma.intervention.update({
+  const result = await prisma.intervention.update({
     where: { id_intervention },
     data: {
       statut: 'ANNULEE',
@@ -214,6 +204,12 @@ export const annulerReservationClient = async (id_intervention, id_client, motif
       commentaire: true,
     },
   });
+
+  // ── Supprime l'événement Cronofy (non bloquant) ──────────
+  setImmediate(() => supprimerEvenementIntervention(id_intervention));
+
+  return result;
+};
 
 // ─────────────────────────────────────────────
 // RESA-06 : Liste des réservations du client
