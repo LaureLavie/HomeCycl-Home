@@ -9,8 +9,8 @@ on:
       - main
 
 env:
-  FRONT_IMAGE: lorlaviedevdesign/front:latest
-  BACK_IMAGE: lorlaviedevdesign/back:latest
+  FRONT_IMAGE: lorlaviedevdesign/front
+  BACK_IMAGE: lorlaviedevdesign/back
   DOCKER_TAG: ${{ github.sha }}
 
 jobs:
