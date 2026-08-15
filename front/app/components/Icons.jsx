@@ -282,3 +282,37 @@ export function ShareIcon({ size = 18 }) {
       </svg>
     );
   }
+  export function SearchIcon({ size = 18 }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="10.5" cy="10.5" r="6.5" />
+        <path d="m20 20-4.3-4.3" />
+      </svg>
+    );
+  }
+  
+  export function BellIcon({ size = 18 }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 13 6 9Z" />
+        <path d="M10 19a2 2 0 0 0 4 0" />
+      </svg>
+    );
+  }
+  
+  export function GearIcon({ size = 18 }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3.2" />
+        <path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.9-1.5-2-3.4-2.2.9a7.6 7.6 0 0 0-2.6-1.5L14 2h-4l-.5 2.3a7.6 7.6 0 0 0-2.6 1.5l-2.2-.9-2 3.4L4.6 10a7.6 7.6 0 0 0 0 3l-1.9 1.5 2 3.4 2.2-.9c.77.66 1.65 1.17 2.6 1.5L10 22h4l.5-2.3c.95-.33 1.83-.84 2.6-1.5l2.2.9 2-3.4-1.9-1.5Z" />
+      </svg>
+    );
+  }
+  
+  export function PlusIcon({ size = 20 }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+    );
+  }

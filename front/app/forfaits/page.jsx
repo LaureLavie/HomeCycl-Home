@@ -26,6 +26,10 @@ const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 
 async function getPublicJson(path) {
   const res = await fetch(`${BACKEND_URL}${path}`, { cache: "no-store" });
+  if (!res.ok) {
+    console.error(`Erreur HTTP ${res.status} sur ${path}`);
+    return []; // Valeur de repli pour ne pas casser la page
+  }
   const result = await res.json();
   if (!res.ok || !result.success) {
     throw new Error(result.message || "Erreur lors du chargement des données");

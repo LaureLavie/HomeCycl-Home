@@ -24,6 +24,7 @@ import {
   historiqueRouter,
 } from './routes/reservationRoute.js';
 import { contactRouter } from './routes/contactRoute.js';
+import { dashboardRouter } from './routes/dashboardRoute.js';
 
 
 
@@ -49,6 +50,7 @@ app.use((req, res, next) => {
 // Routes
 // ─────────────────────────────────────────────
 app.use('/api/inscription', inscriptionRouter);
+app.use('/api/dashboard', dashboardRouter);
 app.use('/api/public', publicRouter);
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
