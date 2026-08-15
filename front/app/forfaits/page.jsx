@@ -25,18 +25,24 @@ export const metadata = {
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 
 async function getPublicJson(path) {
-  const res = await fetch(`${BACKEND_URL}${path}`, { cache: "no-store" });
-  if (!res.ok) {
-    console.error(`Erreur HTTP ${res.status} sur ${path}`);
-    return []; // Valeur de repli pour ne pas casser la page
+  try {
+    const res = await fetch(`${BACKEND_URL}${path}`, { cache: "no-store" });
+    if (!res.ok) {
+      console.error(`Erreur HTTP ${res.status} sur ${path}`);
+      return []; // Valeur de repli pour ne pas casser la page
+    }
+    const result = await res.json();
+    
+    // Gère le cas où l'API renvoie directement un tableau ou { success: true, data: [...] }
+    if (Array.isArray(result)) return result;
+    if (result && result.data) return result.data;
+    
+    return [];
+  } catch (err) {
+    console.error(`Erreur réseau ou fetch impossible sur ${path} (${BACKEND_URL}) :`, err.message);
+    return []; // Évite le plantage total du Server Component
   }
-  const result = await res.json();
-  if (!res.ok || !result.success) {
-    throw new Error(result.message || "Erreur lors du chargement des données");
-  }
-  return result.data;
 }
-
 // Le champ `description` est en TEXT côté back : on affiche une puce par ligne
 // si l'admin l'a saisi en multi-lignes, sinon un seul paragraphe.
 function toBullets(description) {
@@ -63,13 +69,17 @@ function imageForfaitVedette(forfait) {
 }
 
 export default async function ForfaitsPage() {
-  const [forfaits, produits] = await Promise.all([
+  const [forfaits = [], produits = []] = await Promise.all([
     getPublicJson("/api/public/forfaits"),
     getPublicJson("/api/public/produits"),
   ]);
 
-  const forfaitsVae = forfaits.filter(estVae);
-  const forfaitsStandard = forfaits
+  // Sécurité supplémentaire au cas où ce ne sont pas des tableaux
+  const safeForfaits = Array.isArray(forfaits) ? forfaits : [];
+  const safeProduits = Array.isArray(produits) ? produits : [];
+
+  const forfaitsVae = safeForfaits.filter(estVae);
+  const forfaitsStandard = safeForfaits
     .filter((f) => !estVae(f))
     .sort((a, b) => Number(a.prix || 0) - Number(b.prix || 0));
 
