@@ -222,7 +222,7 @@ export const getAll = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────
-// ADMIN : DELETE /api/auth/:id — Désactive un utilisateur (soft delete)
+// ADMIN : DELETE /api/auth/:id — Désactive un utilisateur
 // ─────────────────────────────────────────────
 
 export const deleteUser = async (req, res) => {

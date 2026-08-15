@@ -9,8 +9,8 @@ on:
       - main
 
 env:
-  FRONT_IMAGE: lorlaviedevdesign/front
-  BACK_IMAGE: lorlaviedevdesign/back
+  FRONT_IMAGE: lorlaviedevdesign/front:latest
+  BACK_IMAGE: lorlaviedevdesign/back:latest
   DOCKER_TAG: ${{ github.sha }}
 
 jobs:
@@ -80,10 +80,6 @@ jobs:
             # On force le pull des images fraîchement buildées avec le SHA du commit
             docker pull ${{ env.FRONT_IMAGE }}:${{ env.DOCKER_TAG }}
             docker pull ${{ env.BACK_IMAGE }}:${{ env.DOCKER_TAG }}
-
-            # Optionnel mais propre : on re-tague localement en :latest pour que docker-compose pointe dessus
-            docker tag ${{ env.FRONT_IMAGE }}:${{ env.DOCKER_TAG }} ${{ env.FRONT_IMAGE }}:latest
-            docker tag ${{ env.BACK_IMAGE }}:${{ env.DOCKER_TAG }} ${{ env.BACK_IMAGE }}:latest
             
             # 4. Redéploiement à chaud des conteneurs
             docker-compose up -d --remove-orphans
