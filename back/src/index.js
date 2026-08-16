@@ -49,9 +49,9 @@ app.use((req, res, next) => {
 // ─────────────────────────────────────────────
 // Routes
 // ─────────────────────────────────────────────
+app.use('/api/public', publicRouter);
 app.use('/api/inscription', inscriptionRouter);
 app.use('/api/dashboard', dashboardRouter);
-app.use('/api/public', publicRouter);
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/contact', contactRouter);
@@ -63,10 +63,10 @@ app.use('/api/zone', zoneRouter);
 app.use('/api/planning', planningRouter);
 app.use('/api/technicien', techRouter);
 app.use('/api/reservations',reservationRouter);
-app.use('/api/client', clientRouter);
 app.use('/api/client/profil',   profilRouter);
 app.use('/api/client/velos',       veloRouter);
 app.use('/api/client/historique',  historiqueRouter);
+app.use('/api/client', clientRouter);
 
 
 // Chemin pour servir les fichiers statiques (ex : images uploadées)
