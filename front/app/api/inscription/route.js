@@ -58,7 +58,7 @@ export async function POST(request) {
   // Connexion automatique après inscription (AUTH-08) : même cookie que /api/login
   response.cookies.set("hch_token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.COOKIE_SECURE === "true",
     sameSite: "strict",
     path: "/",
     maxAge: 60 * 60 * 24,
