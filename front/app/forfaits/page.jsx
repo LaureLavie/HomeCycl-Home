@@ -176,7 +176,7 @@ export default async function ForfaitsPage() {
                   </div>
                   <div style={{ position: "relative", flex: "1 1 220px", minHeight: "16rem" }}>
                     <Image
-                      src="/velo-vtt.webp"
+                      src="/images/velo-vtt.webp"
                       alt="Vélo VTT"
                       fill
                       sizes="(min-width: 768px) 30vw, 100vw"

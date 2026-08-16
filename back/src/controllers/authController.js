@@ -318,7 +318,7 @@ export const createUser = async (req, res) => {
 
 const getRedirectByRole = (role) => {
   const redirectMap = {
-    ADMIN: '/admin/dashboard',
+    ADMIN: '/admin',
     TECHNICIEN: '/technicien/planning',
     CLIENT: '/client/dashboard',
   };
