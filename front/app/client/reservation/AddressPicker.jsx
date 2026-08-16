@@ -31,8 +31,9 @@ const trouverZone = (latLng, zones) => {
 // Compétence CDA : Développer des composants métier — Interfaces utilisateur (géolocalisation)
 export default function AddressPicker({ zones, onResolved }) {
   const { isLoaded, loadError } = useJsApiLoader({
-    id: "google-map-zones", // même id que GoogleZoneMap admin : évite un double chargement du script
+    id: "google-map-zones",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    version: "3.55",           // ← même version des deux côtés, cohérence obligatoire
     libraries: LIBRARIES,
   });
 

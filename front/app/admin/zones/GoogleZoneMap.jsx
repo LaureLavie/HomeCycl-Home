@@ -60,6 +60,7 @@ export default function GoogleZoneMap({ zones, onPolygonDrawn }) {
   const { isLoaded, loadError } = useJsApiLoader({
     id: "google-map-zones",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    version: "3.55",           // ← ajouté : dernière version stable avec Drawing
     libraries: LIBRARIES,
   });
 
